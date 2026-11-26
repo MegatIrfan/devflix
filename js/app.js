@@ -568,13 +568,13 @@ const POPULAR_TV_SERIES = [
         id: 'tt10919420',
         title: 'Squid Game',
         type: 'series',
-        year: '2021–',
+        year: '2025',
         country: 'Korea',
         matchScore: 99,
         match: '99% Match',
-        duration: '2 Seasons',
-        age: '18+',
-        genres: 'Action, Drama, Mystery, Thriller',
+        duration: '3 seasons',
+        age: 'TV-MA',
+        genres: 'Thriller, Drama, Mystery',
         trailerKey: 'oqxAJKy0ii4',
         poster: 'https://images.metahub.space/poster/medium/tt10919420/img',
         background: 'https://images.metahub.space/background/medium/tt10919420/img',
@@ -1095,7 +1095,7 @@ class NetflixApp {
         ]);
 
         if (this.allTitles.length > 0) {
-            this.currentHero = this.latestMovies[0] || this.top10Movies[0] || this.allTitles[0];
+            this.currentHero = this.popularSeries.find(s => s.id === 'tt10919420') || this.latestMovies[0] || this.top10Movies[0] || this.allTitles[0];
         }
     }
 
@@ -1122,7 +1122,7 @@ class NetflixApp {
             ...this.dramaMovies
         ]);
 
-        this.currentHero = this.top10Movies[0] || this.allTitles[0];
+        this.currentHero = this.popularSeries.find(s => s.id === 'tt10919420') || this.top10Movies[0] || this.allTitles[0];
     }
 
     deduplicateTitles(list) {
@@ -1297,6 +1297,26 @@ class NetflixApp {
     setupHeroBillboard() {
         this.updateHeroDisplay(this.currentHero, false);
 
+        const banner = document.getElementById('hero-billboard');
+        if (banner) {
+            // Hover directly on hero billboard plays official trailer in background after 300ms
+            banner.addEventListener('mouseenter', () => {
+                if (!this.currentHero) return;
+                clearTimeout(this.heroVideoTimer);
+                this.heroVideoTimer = setTimeout(() => {
+                    this.playBackgroundVideo(this.currentHero);
+                }, 300);
+            });
+
+            banner.addEventListener('mouseleave', () => {
+                clearTimeout(this.heroVideoTimer);
+                // Pause trailer and fade back to poster after leaving
+                this.heroVideoTimer = setTimeout(() => {
+                    this.stopBackgroundVideo();
+                }, 1500);
+            });
+        }
+
         const playBtn = document.getElementById('hero-play-button');
         if (playBtn) {
             playBtn.onclick = () => {
@@ -1304,9 +1324,25 @@ class NetflixApp {
             };
         }
 
+        const trailerBtn = document.getElementById('hero-trailer-btn');
+        if (trailerBtn) {
+            trailerBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (this.currentHero) this.openTrailerModal(this.currentHero);
+            };
+        }
+
         const infoBtn = document.getElementById('hero-info-button');
         if (infoBtn) {
             infoBtn.onclick = () => this.openInfoModal(this.currentHero);
+        }
+
+        const badgePill = document.getElementById('hero-right-badge');
+        if (badgePill) {
+            badgePill.onclick = (e) => {
+                e.stopPropagation();
+                this.playBackgroundVideo(this.currentHero);
+            };
         }
     }
 
@@ -1314,6 +1350,7 @@ class NetflixApp {
     // DYNAMIC HERO HOVER & VIDEO BACKGROUND SYSTEM
     // ==========================================================
     updateHeroDisplay(item, isPreview = false) {
+        if (!item) return;
         this.currentHero = item;
         const banner = document.getElementById('hero-billboard');
         const title = document.getElementById('hero-title');
@@ -1326,14 +1363,44 @@ class NetflixApp {
         const genres = document.getElementById('hero-genres');
         const previewTag = document.getElementById('live-preview-tag');
 
+        // Clean Netflix metadata row elements
+        const typeClean = document.getElementById('hero-type-clean');
+        const genreClean = document.getElementById('hero-genre-clean');
+        const yearClean = document.getElementById('hero-year-clean');
+        const durationClean = document.getElementById('hero-duration-clean');
+        const ageClean = document.getElementById('hero-age-clean');
+        const badgeLabel = document.getElementById('hero-badge-label');
+
+        const isSeries = item.type === 'series';
+        const primaryGenre = item.genres ? item.genres.split(',')[0].trim() : (isSeries ? 'Thriller' : 'Action');
+        const cleanYear = item.year ? item.year.replace(/[–-].*$/, '') : '2025';
+        const cleanDuration = item.duration || (isSeries ? '3 seasons' : '2h 15m');
+        const cleanAge = item.age || (isSeries ? 'TV-MA' : '18+');
+
         if (title) title.textContent = item.title;
         if (overview) overview.textContent = item.overview;
-        if (typeBadge) typeBadge.textContent = item.type === 'series' ? 'SERIES' : 'ORIGINAL';
-        if (duration) duration.textContent = item.duration || (item.type === 'series' ? '4 Seasons' : '2h 15m');
+        if (typeBadge) typeBadge.textContent = isSeries ? 'SERIES' : 'ORIGINAL';
+        if (duration) duration.textContent = cleanDuration;
         if (match) match.textContent = item.match || '98% Match';
-        if (year) year.textContent = item.year;
-        if (age) age.textContent = item.age || '16+';
+        if (year) year.textContent = cleanYear;
+        if (age) age.textContent = cleanAge;
         if (genres) genres.textContent = item.genres || 'Action • Sci-Fi';
+
+        if (typeClean) typeClean.textContent = isSeries ? 'Show' : 'Movie';
+        if (genreClean) genreClean.textContent = primaryGenre;
+        if (yearClean) yearClean.textContent = cleanYear;
+        if (durationClean) durationClean.textContent = cleanDuration;
+        if (ageClean) ageClean.textContent = cleanAge;
+
+        if (badgeLabel) {
+            if (item.id === 'tt10919420') {
+                badgeLabel.textContent = 'Coming June 27';
+            } else if (item.year && parseInt(item.year, 10) >= 2025) {
+                badgeLabel.textContent = 'Trending 2025';
+            } else {
+                badgeLabel.textContent = 'Top Pick Today';
+            }
+        }
 
         if (previewTag) {
             if (isPreview) previewTag.classList.remove('hidden');
@@ -1353,91 +1420,173 @@ class NetflixApp {
 
     onHoverCard(item) {
         clearTimeout(this.videoTimer);
+        clearTimeout(this.heroVideoTimer);
 
         // Update Billboard text and backdrop immediately
         this.updateHeroDisplay(item, true);
 
-        // Trigger ambient background video after 400ms hover
+        // Trigger ambient background video trailer after 350ms hover
         this.videoTimer = setTimeout(() => {
             this.playBackgroundVideo(item);
-        }, 400);
+        }, 350);
     }
 
     onLeaveCard() {
         clearTimeout(this.videoTimer);
+        clearTimeout(this.heroVideoTimer);
         this.stopBackgroundVideo();
         const previewTag = document.getElementById('live-preview-tag');
         if (previewTag) previewTag.classList.add('hidden');
     }
 
-    playBackgroundVideo(item) {
+    async playBackgroundVideo(item) {
         const videoLayer = document.getElementById('hero-video-layer');
         const backdropImg = document.getElementById('hero-backdrop-img');
-        if (!videoLayer) return;
+        const previewTag = document.getElementById('live-preview-tag');
+        if (!videoLayer || !item) return;
 
-        // Clean high quality cinematic preview clips (mp4)
-        const cinemataClips = [
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
-        ];
+        const currentReqId = item.id;
+        this.activeVideoReqId = currentReqId;
 
-        const videoPreviews = {
-            'tt4574334': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-            'tt6263850': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-            'tt15239678': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-            'tt13443470': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-            'tt18411490': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-        };
+        // 1. Check item pre-configured trailerKey or in-memory cache
+        let ytId = item.trailerKey || null;
+        if (!ytId && this.trailerCache && this.trailerCache[item.id]) {
+            ytId = this.trailerCache[item.id];
+        }
 
-        const clipUrl = videoPreviews[item.id] || cinemataClips[Math.floor(Math.random() * cinemataClips.length)];
+        // 2. High-reliability blockbuster trailer dictionary
+        if (!ytId) {
+            const KNOWN_TRAILERS = {
+                'tt10919420': 'oqxAJKy0ii4', // Squid Game
+                'tt4574334': 'b9EkMc79ZSU',  // Stranger Things
+                'tt1190634': 'Di310BC8zMg',  // Wednesday
+                'tt13443470': 'sq9L6n1T-W8', // The Night Agent
+                'tt6468322': '_InqQJRqGW4',  // Money Heist
+                'tt14144734': 'IN5TD4VRcZU', // All of Us Are Dead
+                'tt0903747': 'HhesaQXLuRY',  // Breaking Bad
+                'tt0944947': 'KPLWWIOCOOQ',  // Game of Thrones
+                'tt1375666': 'YoHD9XEInc0',  // Inception
+                'tt0816692': 'zSWdZVtXT7E',  // Interstellar
+                'tt0468569': 'EXeTwQWrcwY',  // The Dark Knight
+                'tt15239678': 'Way9Dexny3w', // Dune: Part Two
+                'tt15398776': 'uYPbbksJxIg', // Oppenheimer
+                'tt11347146': 'h1vfzjY5LXs', // Mat Kilau
+                'tt31908752': 'Y7vDskk7PqE', // Sheriff
+                'tt5132854': 'Gg4P2K_Ff4w',  // Polis Evo
+                'tt9063106': 'qH62UvU8r5g',  // PASKAL
+                'tt22024396': '8Y7fW2aC4j4',  // MALBATT
+                'tt30253785': 'NlE5d334KqY', // Pendekar Awang
+                'tt10872600': 'JfVOs4VSpmA', // Spider-Man: No Way Home
+                'tt1877830': '8g18jFHCLXk',  // The Batman
+                'tt6263850': 'mqqft2x_Aa4',  // Deadpool & Wolverine
+                'tt1517268': 'pBk4NYhWNMM',  // Barbie
+                'tt11194492': 'pZ1b14a2Y4o', // Wira
+                'tt14571464': 'lU8aP_gL46M'  // Air Force The Movie
+            };
+            if (KNOWN_TRAILERS[item.id]) {
+                ytId = KNOWN_TRAILERS[item.id];
+            }
+        }
 
-        // Clear previous video
+        // 3. Dynamically fetch authentic YouTube trailer key from Cinemeta API
+        if (!ytId) {
+            try {
+                const mType = item.type || 'movie';
+                const metaRes = await fetch(`https://v3-cinemeta.strem.io/meta/${mType}/${item.id}.json`);
+                if (metaRes.ok) {
+                    const metaData = await metaRes.json();
+                    const meta = metaData && metaData.meta;
+                    if (meta) {
+                        if (meta.trailerStreams && meta.trailerStreams.length > 0 && meta.trailerStreams[0].ytId) {
+                            ytId = meta.trailerStreams[0].ytId;
+                        } else if (meta.trailers && meta.trailers.length > 0 && meta.trailers[0].source) {
+                            ytId = meta.trailers[0].source;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Cinemeta trailer lookup error:', e);
+            }
+        }
+
+        if (ytId) {
+            if (!this.trailerCache) this.trailerCache = {};
+            this.trailerCache[item.id] = ytId;
+        }
+
+        // Check race condition
+        if (this.activeVideoReqId !== currentReqId) return;
+
         videoLayer.innerHTML = '';
 
-        const video = document.createElement('video');
-        video.id = 'hero-preview-video';
-        video.src = clipUrl;
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = true;
-        video.defaultMuted = true;
-        video.playsInline = true;
-        video.setAttribute('playsinline', '');
-        video.setAttribute('webkit-playsinline', '');
-        video.setAttribute('muted', '');
+        if (ytId) {
+            const iframe = document.createElement('iframe');
+            iframe.id = 'hero-yt-player';
+            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${ytId}&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0`;
+            iframe.setAttribute('frameborder', '0');
+            iframe.setAttribute('allow', 'autoplay; encrypted-media');
+            iframe.setAttribute('allowfullscreen', 'true');
 
-        video.onplaying = () => {
-            videoLayer.classList.remove('hidden');
-            videoLayer.classList.add('active');
-            if (backdropImg) backdropImg.style.opacity = '0';
-        };
-
-        videoLayer.appendChild(video);
-        videoLayer.classList.remove('hidden');
-        videoLayer.classList.add('active');
-
-        // Play video
-        const p = video.play();
-        if (p !== undefined) {
-            p.then(() => {
+            iframe.onload = () => {
+                if (this.activeVideoReqId !== currentReqId) return;
+                videoLayer.classList.remove('hidden');
+                videoLayer.classList.add('active');
+                if (previewTag) previewTag.classList.remove('hidden');
                 if (backdropImg) backdropImg.style.opacity = '0';
-            }).catch(() => {
-                video.muted = true;
-                video.play().catch(() => {});
-            });
+
+                if (!this.isMuted) {
+                    setTimeout(() => {
+                        try {
+                            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+                        } catch (e) {}
+                    }, 400);
+                }
+            };
+
+            videoLayer.appendChild(iframe);
+        } else {
+            // HTML5 Cinematic fallback clip
+            const cinemataClips = [
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
+            ];
+            const clipUrl = cinemataClips[Math.floor(Math.random() * cinemataClips.length)];
+
+            const video = document.createElement('video');
+            video.id = 'hero-preview-video';
+            video.src = clipUrl;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = this.isMuted;
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+
+            video.onplaying = () => {
+                if (this.activeVideoReqId !== currentReqId) return;
+                videoLayer.classList.remove('hidden');
+                videoLayer.classList.add('active');
+                if (previewTag) previewTag.classList.remove('hidden');
+                if (backdropImg) backdropImg.style.opacity = '0';
+            };
+
+            videoLayer.appendChild(video);
+            video.play().catch(() => {});
         }
     }
 
     stopBackgroundVideo() {
+        this.activeVideoReqId = null;
         const videoLayer = document.getElementById('hero-video-layer');
         const backdropImg = document.getElementById('hero-backdrop-img');
+        const previewTag = document.getElementById('live-preview-tag');
         if (!videoLayer) return;
         videoLayer.classList.remove('active');
         videoLayer.classList.add('hidden');
         videoLayer.innerHTML = '';
         if (backdropImg) backdropImg.style.opacity = '1';
+        if (previewTag) previewTag.classList.add('hidden');
     }
 
     setupSoundToggle() {
@@ -1456,6 +1605,14 @@ class NetflixApp {
             } else {
                 iconMuted?.classList.add('hidden');
                 iconUnmuted?.classList.remove('hidden');
+            }
+
+            const ytIframe = document.getElementById('hero-yt-player');
+            if (ytIframe && ytIframe.contentWindow) {
+                const func = this.isMuted ? 'mute' : 'unMute';
+                try {
+                    ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
+                } catch (err) {}
             }
 
             const videoEl = document.getElementById('hero-preview-video');
@@ -1496,6 +1653,23 @@ class NetflixApp {
     }
 
     renderAllRails() {
+        // Render Your Next Watch rail directly under Hero billboard
+        const nextWatchContainer = document.getElementById('next-watch-rail');
+        if (nextWatchContainer) {
+            const history = window.netflixPlayer ? window.netflixPlayer.getHistory() : [];
+            const nextWatchPool = [];
+            if (history && history.length > 0) {
+                nextWatchPool.push(...history);
+            }
+            const seriesPool = (this.popularSeries && this.popularSeries.length > 0) ? this.popularSeries : POPULAR_TV_SERIES;
+            seriesPool.forEach(item => {
+                if (!nextWatchPool.some(x => x.id === item.id)) {
+                    nextWatchPool.push(item);
+                }
+            });
+            this.renderStandardRail(nextWatchPool.slice(0, 18), nextWatchContainer);
+        }
+
         this.renderLatestBlockbustersRail(this.latestMovies, document.getElementById('latest-rail'));
         this.renderTop10Rail(this.top10Movies, document.getElementById('top10-rail'));
         this.renderStandardRail(this.malaysiaMovies, document.getElementById('malaysia-rail'));

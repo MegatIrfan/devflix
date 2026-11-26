@@ -223,17 +223,12 @@
                     </button>
                 </div>
 
-                <!-- SECTION 1: CONTINUE WATCHING (HERO BANNER CARD + ADJACENT POSTER CARDS) -->
-                <section class="spatial-section" id="section-continue-watching">
-                    <div class="section-title-row">
-                        <h2 class="spatial-section-heading">Continue Watching</h2>
-                        <div class="section-arrow-btn">›</div>
-                    </div>
-
-                    <div class="spatial-hero-grid">
+                <!-- SECTION 1: PANORAMIC HERO BILLBOARD (LIVE TRAILER BACKGROUND ON HOVER) -->
+                <section class="spatial-section hero-billboard-section" id="section-hero">
+                    <div class="spatial-hero-container">
                         <!-- BIG HERO FEATURED BANNER CARD (WITH LIVE HOVER VIDEO & AMBIENT GLOW) -->
-                        <div class="vision-hero-card" id="hero-billboard">
-                            <!-- Live Interactive Video Trailer Layer -->
+                        <div class="vision-hero-card" id="hero-billboard" tabindex="0">
+                            <!-- Live Interactive Video Trailer Layer (Plays authentic YouTube / video trailer on hover) -->
                             <div class="hero-video-layer hidden" id="hero-video-layer"></div>
                             
                             <!-- Static/Dynamic Background Image -->
@@ -248,32 +243,51 @@
                                 </button>
                             </div>
 
+                            <!-- Bottom-Right Status / Release Pill Badge (Exact Netflix UI: 🗓️ Coming June 27) -->
+                            <div class="hero-right-badge" id="hero-right-badge">
+                                <span class="badge-icon">🗓️</span>
+                                <span id="hero-badge-label">Coming June 27</span>
+                            </div>
+
                             <!-- Hero Content Body -->
                             <div class="hero-card-content">
                                 <div class="hero-series-tag">
-                                    <span class="n-mark">D</span>
-                                    <span id="hero-type-badge">SERIES</span>
-                                    <span class="live-preview-tag hidden" id="live-preview-tag">● PREVIEWING</span>
+                                    <span class="n-mark">N</span>
+                                    <span class="series-tag-text" id="hero-type-badge">SERIES</span>
+                                    <span class="live-preview-tag hidden" id="live-preview-tag">● TRAILER ACTIVE</span>
                                 </div>
                                 
-                                <h1 class="hero-featured-title" id="hero-title">STRANGER THINGS</h1>
+                                <h1 class="hero-featured-title" id="hero-title">SQUID GAME</h1>
 
-                                <div class="hero-meta-badges">
+                                <!-- Sleek Netflix / Apple TV Metadata Row: Show • Thriller • 2025 • 3 seasons • TV-MA -->
+                                <div class="hero-meta-clean" id="hero-meta-clean">
+                                    <span id="hero-type-clean">Show</span> • 
+                                    <span id="hero-genre-clean">Thriller</span> • 
+                                    <span id="hero-year-clean">2025</span> • 
+                                    <span id="hero-duration-clean">3 seasons</span> • 
+                                    <span class="badge-age-clean" id="hero-age-clean">TV-MA</span>
+                                </div>
+
+                                <div class="hero-meta-badges hidden" id="legacy-meta-badges">
                                     <span class="badge-match" id="hero-match">98% Match</span>
-                                    <span class="badge-year" id="hero-year">2022</span>
-                                    <span class="badge-seasons" id="hero-duration">4 Seasons</span>
-                                    <span class="badge-tech">4K</span>
-                                    <span class="badge-genre" id="hero-genres">Sci-Fi • Horror • Mystery</span>
+                                    <span class="badge-year" id="hero-year">2025</span>
+                                    <span class="badge-seasons" id="hero-duration">3 seasons</span>
+                                    <span class="badge-genre" id="hero-genres">Thriller</span>
+                                    <span id="hero-age">TV-MA</span>
                                 </div>
 
                                 <p class="hero-description-text" id="hero-overview">
-                                    When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying forces, and one strange little girl.
+                                    Hundreds of cash-strapped players accept a strange invitation to compete in children's games with deadly high stakes.
                                 </p>
 
                                 <div class="hero-card-buttons">
                                     <button class="hero-btn-play" id="hero-play-button">
                                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                                         <span>Play</span>
+                                    </button>
+                                    <button class="hero-btn-trailer" id="hero-trailer-btn" title="Watch Official Trailer">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/><circle cx="12" cy="12" r="10"/></svg>
+                                        <span>Trailer</span>
                                     </button>
                                     <button class="hero-btn-info" id="hero-info-button">
                                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -283,16 +297,33 @@
                             </div>
 
                             <!-- Carousel Dots Indicator -->
-                            <div class="hero-card-dots">
+                            <div class="hero-card-dots" id="hero-card-dots">
                                 <span class="dot active"></span>
                                 <span class="dot"></span>
                                 <span class="dot"></span>
                             </div>
                         </div>
 
-                        <!-- TWO ADJACENT FEATURED POSTER CARDS -->
-                        <div class="featured-side-posters" id="featured-side-posters">
-                            <!-- Injected dynamically: Night Agent, Wednesday, etc. -->
+                        <!-- Hidden side container hook to maintain compatibility -->
+                        <div id="featured-side-posters" style="display:none;"></div>
+                    </div>
+                </section>
+
+                <!-- SECTION: YOUR NEXT WATCH (Directly below hero billboard, matching user reference image) -->
+                <section class="spatial-section" id="section-next-watch">
+                    <div class="section-title-row">
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                            <h2 class="spatial-section-heading">Your Next Watch</h2>
+                        </div>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="next-watch-rail">
+                            <!-- Populated with Next Watch items -->
                         </div>
                     </div>
                 </section>

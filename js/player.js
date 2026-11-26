@@ -349,13 +349,11 @@ class NetflixPlayer {
         let streamUrl = '';
 
         const startAt = this.lastKnownTime > 5 ? this.lastKnownTime : (this.getPlaybackProgress(this.currentMedia.id) || 0);
-        const subUrl = this.activeSubtitle ? this.activeSubtitle.url : '';
-        const subLabel = this.activeSubtitle ? this.activeSubtitle.label : 'Malay';
 
         if (this.currentMedia.type === 'series') {
-            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt, subUrl, subLabel);
+            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt);
         } else {
-            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt, subUrl, subLabel);
+            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt);
         }
 
         // Completely remove any sandbox attribute so video embeds never throw "sandboxed frame" error
@@ -593,7 +591,7 @@ class NetflixPlayer {
             subBtn.style.fontWeight = '700';
         }
 
-        // Close modal and reload current stream with injected subtitle param
+        // Close modal without resetting/black screening the video iframe
         const modal = document.getElementById('player-subtitle-modal');
         if (modal) modal.classList.add('hidden');
 
@@ -608,9 +606,6 @@ class NetflixPlayer {
         } catch(e) {
             console.warn('Could not load SRT for live overlay:', e);
         }
-
-        // Reload iframe with the subtitle applied
-        this.loadIframe();
     }
 
     parseSRT(data) {

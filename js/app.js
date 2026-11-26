@@ -2176,6 +2176,9 @@ class NetflixApp {
     }
 
     browseAtoZ(letter = 'all') {
+        const atozBar = document.getElementById('atoz-bar');
+        if (atozBar) atozBar.classList.remove('hidden');
+
         const filteredSection = document.getElementById('filtered-view-section');
         const filteredGrid = document.getElementById('filtered-grid');
         const filteredTitle = document.getElementById('filtered-view-title');
@@ -2838,30 +2841,44 @@ class NetflixApp {
         });
 
         const filteredSection = document.getElementById('filtered-view-section');
+        const atozBar = document.getElementById('atoz-bar');
+        const topHeader = document.getElementById('vision-top-header');
+
+        if (view !== 'atoz' && atozBar) {
+            atozBar.classList.add('hidden');
+        }
 
         if (view === 'atoz') {
             this.browseAtoZ('all');
         } else if (view === 'movies') {
+            if (topHeader) topHeader.classList.remove('hidden');
             this.currentGenre = 'all';
             this.filterByType('movie');
         } else if (view === 'series') {
+            if (topHeader) topHeader.classList.remove('hidden');
             this.currentGenre = 'all';
             this.filterByType('series');
         } else if (view === 'games') {
+            if (topHeader) topHeader.classList.add('hidden');
             this.filterByGenre('Animation');
         } else if (view === 'recent') {
+            if (topHeader) topHeader.classList.add('hidden');
             this.filterRecentlyAdded();
         } else if (view === 'trending') {
+            if (topHeader) topHeader.classList.add('hidden');
             if (filteredSection) filteredSection.classList.add('hidden');
             document.querySelectorAll('.spatial-section:not(#filtered-view-section)').forEach(sec => sec.classList.remove('hidden'));
             document.getElementById('section-new-popular')?.scrollIntoView({ behavior: 'smooth' });
         } else if (view === 'languages') {
+            if (topHeader) topHeader.classList.remove('hidden');
             if (filteredSection) filteredSection.classList.add('hidden');
             document.querySelectorAll('.spatial-section:not(#filtered-view-section)').forEach(sec => sec.classList.remove('hidden'));
             document.getElementById('country-pill-track')?.scrollIntoView({ behavior: 'smooth' });
         } else if (view === 'watchlist' || view === 'watchlater') {
+            if (topHeader) topHeader.classList.add('hidden');
             this.openWatchlistModal();
         } else {
+            if (topHeader) topHeader.classList.add('hidden');
             if (filteredSection) filteredSection.classList.add('hidden');
             const regularSections = document.querySelectorAll('.spatial-section:not(#filtered-view-section)');
             regularSections.forEach(sec => sec.classList.remove('hidden'));

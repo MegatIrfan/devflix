@@ -1729,8 +1729,58 @@ class NetflixApp {
 
                 this.displayedCount = 30;
                 this.applyFilterAndSort();
+
+                // Live dynamic fetch for genre from Cinemeta API if not already fetched!
+                if (this.currentGenre !== 'all') {
+                    this.fetchGenreCatalog(this.currentGenre);
+                }
             };
         });
+    }
+
+    async fetchGenreCatalog(genre) {
+        if (!this.fetchedGenres) this.fetchedGenres = new Set();
+        const gKey = genre.toLowerCase();
+        if (this.fetchedGenres.has(gKey)) return;
+        this.fetchedGenres.add(gKey);
+
+        const filteredCount = document.getElementById('filtered-count');
+        if (filteredCount && this.currentGenre.toLowerCase() === gKey) {
+            filteredCount.textContent = `Fetching live ${genre} catalog from Cinemeta...`;
+        }
+
+        try {
+            const [p1, p2] = await Promise.all([
+                fetch(`https://v3-cinemeta.strem.io/catalog/movie/top/genre=${encodeURIComponent(genre)}.json`).then(r => r.json()).catch(() => ({})),
+                fetch(`https://v3-cinemeta.strem.io/catalog/movie/top/genre=${encodeURIComponent(genre)}/skip=50.json`).then(r => r.json()).catch(() => ({}))
+            ]);
+
+            const m1 = (p1 && Array.isArray(p1.metas)) ? p1.metas : [];
+            const m2 = (p2 && Array.isArray(p2.metas)) ? p2.metas : [];
+            const combined = [...m1, ...m2];
+
+            if (combined.length > 0) {
+                const formatted = combined.map(m => formatCinemetaItem(m, 'movie'));
+                this.allTitles = this.deduplicateTitles([...this.allTitles, ...formatted]);
+
+                if (this.currentGenre.toLowerCase() === gKey) {
+                    this.applyFilterAndSort();
+                }
+            }
+        } catch (e) {
+            console.warn('Error fetching live genre catalog:', genre, e);
+        }
+    }
+
+    setupLoadMore() {
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.onclick = (e) => {
+                e.preventDefault();
+                this.displayedCount += 30;
+                this.applyFilterAndSort();
+            };
+        }
     }
 
     setupSortControls() {

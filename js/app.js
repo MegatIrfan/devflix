@@ -1143,6 +1143,7 @@ class NetflixApp {
         this.setupAtoZControls();
         this.setupTVRemoteNavigation();
         this.setupSidebarNavigation();
+        this.setupTopNavbar();
         this.setupMobileNavigation();
         this.setupSearch();
         this.setupInfoModal();
@@ -2832,7 +2833,7 @@ class NetflixApp {
     }
 
     navigateToView(view) {
-        document.querySelectorAll('.nav-pill, .menu-item, .bottom-nav-item').forEach(m => {
+        document.querySelectorAll('.nav-pill, .menu-item, .bottom-nav-item, .top-nav-tab').forEach(m => {
             m.classList.toggle('active', m.getAttribute('data-view') === view);
         });
 
@@ -2846,6 +2847,8 @@ class NetflixApp {
         } else if (view === 'series') {
             this.currentGenre = 'all';
             this.filterByType('series');
+        } else if (view === 'games') {
+            this.filterByGenre('Animation');
         } else if (view === 'recent') {
             this.filterRecentlyAdded();
         } else if (view === 'trending') {
@@ -2869,6 +2872,95 @@ class NetflixApp {
 
         if (typeof this.closeMobileDrawer === 'function') {
             this.closeMobileDrawer();
+        }
+    }
+
+    setupTopNavbar() {
+        // 1. Profile Dropdown Toggle
+        const profileTrigger = document.getElementById('nav-profile-trigger');
+        const profileDropdown = document.getElementById('nav-profile-dropdown');
+        if (profileTrigger && profileDropdown) {
+            profileTrigger.onclick = (e) => {
+                e.stopPropagation();
+                profileTrigger.classList.toggle('open');
+                profileDropdown.classList.toggle('hidden');
+            };
+
+            document.addEventListener('click', (e) => {
+                if (!profileTrigger.contains(e.target)) {
+                    profileTrigger.classList.remove('open');
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        const menuWatchlist = document.getElementById('menu-item-watchlist');
+        if (menuWatchlist) {
+            menuWatchlist.onclick = (e) => {
+                e.preventDefault();
+                this.openWatchlistModal();
+            };
+        }
+
+        const menuMalaysia = document.getElementById('menu-item-malaysia');
+        if (menuMalaysia) {
+            menuMalaysia.onclick = (e) => {
+                e.preventDefault();
+                this.filterByCountry('Malaysia');
+            };
+        }
+
+        const menuAtoz = document.getElementById('menu-item-atoz');
+        if (menuAtoz) {
+            menuAtoz.onclick = (e) => {
+                e.preventDefault();
+                this.browseAtoZ('all');
+            };
+        }
+
+        // 2. Center Pill Tabs (Home, Shows, Movies, Games, My Netflix)
+        document.querySelectorAll('.top-nav-tab').forEach(tab => {
+            tab.onclick = (e) => {
+                e.preventDefault();
+                const view = tab.getAttribute('data-view');
+                if (view) this.navigateToView(view);
+            };
+        });
+
+        // 3. Search Trigger & Sync
+        const searchBtn = document.getElementById('nav-search-btn');
+        const topSearchInput = document.getElementById('top-search-input');
+        const topSearchClose = document.getElementById('top-search-close');
+        const sidebarSearchInput = document.getElementById('quick-search-input');
+
+        if (searchBtn && topSearchInput) {
+            searchBtn.onclick = (e) => {
+                e.stopPropagation();
+                topSearchInput.classList.toggle('hidden');
+                topSearchClose?.classList.toggle('hidden');
+                if (!topSearchInput.classList.contains('hidden')) {
+                    topSearchInput.focus();
+                }
+            };
+        }
+
+        if (topSearchClose && topSearchInput) {
+            topSearchClose.onclick = () => {
+                topSearchInput.value = '';
+                topSearchInput.classList.add('hidden');
+                topSearchClose.classList.add('hidden');
+                if (sidebarSearchInput) {
+                    sidebarSearchInput.value = '';
+                    sidebarSearchInput.dispatchEvent(new Event('input'));
+                }
+            };
+        }
+
+        if (topSearchInput && sidebarSearchInput) {
+            topSearchInput.oninput = () => {
+                sidebarSearchInput.value = topSearchInput.value;
+                sidebarSearchInput.dispatchEvent(new Event('input'));
+            };
         }
     }
 

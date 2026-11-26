@@ -67,6 +67,25 @@ function shuffleArray(array) {
     return arr;
 }
 
+// MALAYSIA & NUSANTARA CINEMA BLOCKBUSTERS COLLECTION
+const MALAYSIA_CINEMA_COLLECTION = [
+    { id: 'tt11347146', title: 'Mat Kilau: Kebangkitan Pahlawan', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Action, Adventure, Drama', matchScore: 99, match: '99% Match', duration: '1h 58m', age: '13+', trailerKey: 'h1vfzjY5LXs', overview: 'Kisah kebangkitan pahlawan Melayu Mat Kilau bersama para sahabatnya menentang penjajahan British demi mempertahankan maruah bangsa dan agama di Tanah Melayu.' },
+    { id: 'tt5132854', title: 'Polis Evo', type: 'movie', year: '2015', country: 'Malaysia', genres: 'Action, Comedy, Crime', matchScore: 98, match: '98% Match', duration: '2h 00m', age: '16+', trailerKey: 'Gg4P2K_Ff4w', overview: 'Dua anggota polis yang berbeza perwatakan berganding bahu dalam misi berbahaya membanteras sindiket dadah terbesar di Terengganu.' },
+    { id: 'tt8369678', title: 'Polis Evo 2', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Action, Crime, Thriller', matchScore: 97, match: '97% Match', duration: '2h 05m', age: '18+', overview: 'Inspektor Sani dan Khai berdepan dengan pengganas ekstremis yang menawan sebuah perkampungan pulau terpencil.' },
+    { id: 'tt27771775', title: 'Polis Evo 3', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Comedy, Crime', matchScore: 98, match: '98% Match', duration: '2h 01m', age: '16+', overview: 'Inspektor Khai dan Sani kembali dalam operasi memburu pakar letupan dan musuh masa lampau yang mengancam keselamatan bandaraya.' },
+    { id: 'tt9063106', title: 'PASKAL: The Movie', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Action, Drama, Thriller', matchScore: 99, match: '99% Match', duration: '1h 55m', age: '16+', trailerKey: 'qH62UvU8r5g', overview: 'Diinspirasikan daripada kisah benar unit elit Pasukan Khas Laut (PASKAL) Tentera Laut Diraja Malaysia dalam misi menyelamatkan kapal tangki MV Bunga Laurel daripada lanun Somalia.' },
+    { id: 'tt22024396', title: 'MALBATT: Misi Bakara', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Drama, War', matchScore: 98, match: '98% Match', duration: '2h 10m', age: '16+', trailerKey: '8Y7fW2aC4j4', overview: 'Kisah wira sebenar Batalion Malaysia (MALBATT) yang menyelamatkan tentera elit US Rangers yang terperangkap di Pasar Bakara, Mogadishu pada tahun 1993.' },
+    { id: 'tt5584514', title: 'Munafik', type: 'movie', year: '2016', country: 'Malaysia', genres: 'Horror, Mystery, Thriller', matchScore: 97, match: '97% Match', duration: '1h 44m', age: '18+', overview: 'Ustaz Adam, seorang pengamal perubatan Islam, bergelut dengan trauma kematian isterinya semasa merawat seorang wanita yang dirasuk entiti iblis jahat.' },
+    { id: 'tt8266228', title: 'Munafik 2', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Horror, Mystery, Thriller', matchScore: 98, match: '98% Match', duration: '1h 50m', age: '18+', overview: 'Ustaz Adam berdepan dengan lelaki misteri bernama Abuja yang mengajar fahaman sesat dan mengamalkan ilmu hitam di sebuah kampung terpencil.' },
+    { id: 'tt8828062', title: 'Hantu Kak Limah', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Comedy, Horror', matchScore: 97, match: '97% Match', duration: '1h 50m', age: '13+', overview: 'Kekecohan melanda Kampung Pisang apabila roh Kak Limah mula menghantui penduduk kampung selepas kematiannya yang penuh misteri.' },
+    { id: 'tt27445004', title: 'Abang Adik', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Drama, Crime', matchScore: 99, match: '99% Match', duration: '1h 55m', age: '16+', overview: 'Dua orang anak yatim tanpa kewarganegaraan berjuang meneruskan kehidupan di lorong-lorong gelap Pudu, Kuala Lumpur, mengikat kasih sayang persaudaraan yang luar biasa.' },
+    { id: 'tt11388746', title: 'Ejen Ali: The Movie', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Animation, Action, Sci-Fi', matchScore: 99, match: '99% Match', duration: '1h 37m', age: 'All', overview: 'Ali menghadapi dilema apabila M.A.T.A. mula menggunakan teknologi baharu NIKI, mencabar kesetiaannya sebagai ejen rahsia Cyberaya.' },
+    { id: 'tt10419266', title: 'BoBoiBoy Movie 2', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Animation, Action, Adventure', matchScore: 98, match: '98% Match', duration: '1h 57m', age: 'All', overview: 'BoBoiBoy dan rakan-rakannya berhadapan dengan musuh purba bernama Retak\'ka yang mahu merampas semula kuasa elemental purba.' },
+    { id: 'tt24225212', title: 'Mechamato Movie', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Animation, Action, Sci-Fi', matchScore: 98, match: '98% Match', duration: '2h 02m', age: 'All', overview: 'Amato secara tidak sengaja bertemu dengan MechaBot, robot berkuasa yang mampu menukar objek harian menjadi alat canggih berteknologi tinggi.' },
+    { id: 'tt0862930', title: 'Dukun', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Crime, Horror, Mystery', matchScore: 96, match: '96% Match', duration: '1h 48m', age: '18+', overview: 'Penyiasatan pembunuhan ahli politik membawa peguam Karim bersemuka dengan Diana Dahlan, seorang dukun wanita misteri yang mengamalkan ilmu hitam berdarah.' },
+    { id: 'tt24581070', title: 'Coast Guard Malaysia: Ops Helang', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Thriller', matchScore: 96, match: '96% Match', duration: '2h 10m', age: '16+', overview: 'Pegawai Pasukan Khas Maritim berjuang menyelamatkan keluarga dan tetamu majlis perkahwinannya yang ditawan pengganas laut.' }
+];
+
 // K-DRAMA & KOREAN CINEMA COLLECTION
 const KOREAN_DRAMAS_COLLECTION = [
     { id: 'tt10919420', title: 'Squid Game', type: 'series', year: '2021', country: 'Korea', genres: 'Action, Drama, Mystery', matchScore: 99, match: '99% Match', duration: '2 Seasons', age: '18+', overview: 'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games with deadly high stakes.' },
@@ -1039,8 +1058,11 @@ class NetflixApp {
         this.horrorMovies = shuffleArray(data.horror || [...HORROR_MOVIES]);
         this.dramaMovies = shuffleArray(data.drama || [...DRAMA_MOVIES]);
 
+        this.malaysiaMovies = [...MALAYSIA_CINEMA_COLLECTION];
+
         this.allTitles = this.deduplicateTitles([
             ...this.latestMovies,
+            ...this.malaysiaMovies,
             ...this.top10Movies,
             ...this.trendingMovies,
             ...this.popularSeries,
@@ -1057,6 +1079,7 @@ class NetflixApp {
 
     applyFallbackCatalogs() {
         this.latestMovies = shuffleArray([...LATEST_2026_MOVIES]);
+        this.malaysiaMovies = [...MALAYSIA_CINEMA_COLLECTION];
         this.top10Movies = shuffleArray([...NETFLIX_TOP_10]).slice(0, 10);
         this.trendingMovies = shuffleArray([...TRENDING_MOVIES]).slice(0, 18);
         this.popularSeries = [...POPULAR_TV_SERIES];
@@ -1067,6 +1090,7 @@ class NetflixApp {
 
         this.allTitles = this.deduplicateTitles([
             ...this.latestMovies,
+            ...this.malaysiaMovies,
             ...this.top10Movies,
             ...this.trendingMovies,
             ...this.popularSeries,
@@ -1452,6 +1476,7 @@ class NetflixApp {
     renderAllRails() {
         this.renderLatestBlockbustersRail(this.latestMovies, document.getElementById('latest-rail'));
         this.renderTop10Rail(this.top10Movies, document.getElementById('top10-rail'));
+        this.renderStandardRail(this.malaysiaMovies, document.getElementById('malaysia-rail'));
         this.renderStandardRail(this.trendingMovies, document.getElementById('trending-rail'));
         this.renderStandardRail(this.popularSeries, document.getElementById('tvseries-rail'));
         this.renderStandardRail(this.actionMovies, document.getElementById('action-rail'));
@@ -2149,7 +2174,13 @@ class NetflixApp {
         if (filteredTitle) {
             let label = 'Filtered Movies';
             if (this.currentCountry !== 'all') {
-                const map = { USA: 'Hollywood Hits', Korea: 'K-Drama & Korean Cinema', Japan: 'Anime & Japanese Masterpieces', UK: 'British Cinema' };
+                const map = { 
+                    Malaysia: '🇲🇾 Cinema Malaysia & Nusantara Hits',
+                    USA: 'Hollywood Hits', 
+                    Korea: 'K-Drama & Korean Cinema', 
+                    Japan: 'Anime & Japanese Masterpieces', 
+                    UK: 'British Cinema' 
+                };
                 label = map[this.currentCountry] || this.currentCountry;
             } else if (this.currentGenre !== 'all') {
                 label = `${this.currentGenre} Movies & Series`;

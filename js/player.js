@@ -78,6 +78,23 @@ class NetflixPlayer {
         }
     }
 
+    startLocalSubtitleTimer() {
+        if (this.subtitleTimer) clearInterval(this.subtitleTimer);
+        this.subtitleTimer = setInterval(() => {
+            if (this.parsedCues && this.parsedCues.length > 0 && this.isOpen()) {
+                this.lastKnownTime = (this.lastKnownTime || 0) + 0.5;
+                this.updateSubtitleOverlay(this.lastKnownTime);
+            }
+        }, 500);
+    }
+
+    stopLocalSubtitleTimer() {
+        if (this.subtitleTimer) {
+            clearInterval(this.subtitleTimer);
+            this.subtitleTimer = null;
+        }
+    }
+
     savePlaybackProgress(id, seconds) {
         if (!id || seconds <= 0) return;
         try {
@@ -586,6 +603,7 @@ class NetflixPlayer {
             if (resp.ok) {
                 const srtContent = await resp.text();
                 this.parsedCues = this.parseSRT(srtContent);
+                this.startLocalSubtitleTimer();
             }
         } catch(e) {
             console.warn('Could not load SRT for live overlay:', e);
@@ -633,6 +651,11 @@ class NetflixPlayer {
     }
 
     close() {
+        this.stopLocalSubtitleTimer();
+        this.parsedCues = [];
+        const overlay = document.getElementById('player-subtitle-overlay');
+        if (overlay) overlay.classList.add('hidden');
+
         if (this.playerIframe) {
             this.playerIframe.src = 'about:blank';
         }

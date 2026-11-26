@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>DevFlix - Spatial Cinema TV Experience</title>
+    <meta name="description" content="Watch movies and TV series with an authentic DevFlix spatial glass TV app interface.">
+    <!-- Referrer Policy -->
+    <meta name="referrer" content="origin-when-cross-origin">
+    <!-- Geist Font Family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e50914'><polygon points='5 3 19 12 5 21 5 3'/></svg>">
+</head>
+<body class="vision-spatial-body">
+
+    <!-- FULLSCREEN IMMERSIVE CINEMA BACKGROUND -->
+    <div class="spatial-environment-bg">
+        <div class="ambient-glow ambient-glow-top"></div>
+        <div class="ambient-glow ambient-glow-bottom"></div>
+    </div>
+
+    <!-- MAIN FULLSCREEN WEB TV APP LAYOUT -->
+    <div class="vision-window-container">
+        <!-- Mobile Drawer Backdrop Overlay -->
+        <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+
+        <div class="vision-glass-panel" id="vision-glass-panel">
+
+            <!-- LEFT FROSTED GLASS SIDEBAR -->
+            <aside class="vision-sidebar" id="vision-sidebar">
+                <!-- Mobile Close Button -->
+                <button class="sidebar-mobile-close" id="sidebar-mobile-close" aria-label="Close Navigation Drawer">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+
+                <!-- Brand Header -->
+                <div class="sidebar-brand-wrapper">
+                    <a href="index.html" class="sidebar-brand-logo">
+                        <span class="brand-text">DEV<span class="brand-accent">FLIX</span></span>
+                    </a>
+                </div>
+
+                <!-- Search Input Widget -->
+                <div class="sidebar-search-box" id="sidebar-search-trigger">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="quick-search-input" placeholder="Search..." autocomplete="off">
+                </div>
+
+                <!-- Main Menu Section -->
+                <div class="sidebar-group">
+                    <span class="sidebar-group-label">Menu</span>
+                    <nav class="sidebar-nav">
+                        <a class="nav-pill active" id="nav-home" data-view="home">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            <span>Home</span>
+                        </a>
+                        <a class="nav-pill" id="nav-trending" data-view="trending">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+                            <span>New & Popular</span>
+                        </a>
+                        <a class="nav-pill" id="nav-series" data-view="series">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                            <span>TV Shows</span>
+                        </a>
+                        <a class="nav-pill" id="nav-movies" data-view="movies">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                            <span>Movies</span>
+                        </a>
+                        <a class="nav-pill" id="nav-watchlist" data-view="watchlist">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>My List</span>
+                        </a>
+                        <a class="nav-pill" id="nav-languages" data-view="languages">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <span>Browse by Country</span>
+                        </a>
+                        <a class="nav-pill" id="nav-atoz" data-view="atoz">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                            <span>A - Z Movies</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Library Section -->
+                <div class="sidebar-group">
+                    <span class="sidebar-group-label">Library</span>
+                    <nav class="sidebar-nav">
+                        <a class="nav-pill" id="nav-recent" data-view="recent">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <span>Recently Added</span>
+                        </a>
+                        <a class="nav-pill" id="nav-watchlater" data-view="watchlater">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <span>Watch Later</span>
+                        </a>
+                        <a class="nav-pill" id="nav-downloads" data-view="downloads">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>Downloads</span>
+                        </a>
+                        <a class="nav-pill" id="nav-account" data-view="account">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <span>My Account</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Sidebar Footer Info -->
+                <div class="sidebar-user-profile">
+                    <div class="user-avatar-circle">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Irfan Avatar">
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">DevIrfan</span>
+                        <span class="user-status">Premium VIP</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- RIGHT CONTENT VIEWPORT -->
+            <main class="vision-main-content" id="vision-main-content">
+
+                <!-- Mobile Header App Bar (Visible on Mobile / Tablets) -->
+                <div class="mobile-app-header" id="mobile-app-header">
+                    <button class="mobile-nav-toggle" id="mobile-menu-btn" aria-label="Open Navigation Menu">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    <a href="index.html" class="mobile-brand-logo">
+                        <span class="brand-text">DEV<span class="brand-accent">FLIX</span></span>
+                    </a>
+                    <button class="mobile-search-trigger" id="mobile-search-btn" aria-label="Search Movies & Dramas">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </button>
+                </div>
+
+                <!-- TOP BAR WITH SORTING & CATEGORY PILLS -->
+                <header class="vision-top-header">
+                    <!-- Country & Filter Tag Carousel -->
+                    <div class="country-pill-track" id="country-pill-track">
+                        <button class="glass-pill active" data-genre="all">✨ All</button>
+                        <button class="glass-pill pill-highlight" data-year="2026">⚡ 2026 Movies</button>
+                        <button class="glass-pill" data-country="USA">🇺🇸 Hollywood</button>
+                        <button class="glass-pill" data-country="Korea">🇰🇷 K-Drama</button>
+                        <button class="glass-pill" data-country="Japan">🇯🇵 Anime</button>
+                        <button class="glass-pill" data-country="UK">🇬🇧 British</button>
+                        <button class="glass-pill" data-genre="Action">Action</button>
+                        <button class="glass-pill" data-genre="Sci-Fi">Sci-Fi</button>
+                        <button class="glass-pill" data-genre="Drama">Drama</button>
+                        <button class="glass-pill" data-genre="Horror">Horror</button>
+                        <button class="glass-pill" data-genre="Comedy">Comedy</button>
+                        <button class="glass-pill" data-genre="Adventure">Adventure</button>
+                        <button class="glass-pill" data-genre="Animation">Animation</button>
+                        <button class="glass-pill" data-genre="Crime">Crime</button>
+                    </div>
+
+                    <!-- Right Controls: Live Sort -->
+                    <div class="top-header-right">
+                        <div class="sort-wrapper">
+                            <svg class="sort-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+                            <span class="sort-tag">SORT</span>
+                            <select id="sort-dropdown" class="sort-select-glass">
+                                <option value="featured">🔥 Featured</option>
+                                <option value="rating">⭐ Highest Match</option>
+                                <option value="year">📅 Newest First</option>
+                                <option value="title">🔤 Title (A - Z)</option>
+                            </select>
+                            <svg class="sort-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- A - Z ALPHABETICAL DIRECTORY BAR & LIVE FETCH ALL WIDGET -->
+                <div class="atoz-alphabet-bar" id="atoz-bar">
+                    <button class="atoz-letter-pill active" data-letter="all">ALL</button>
+                    <button class="atoz-letter-pill" data-letter="A">A</button>
+                    <button class="atoz-letter-pill" data-letter="B">B</button>
+                    <button class="atoz-letter-pill" data-letter="C">C</button>
+                    <button class="atoz-letter-pill" data-letter="D">D</button>
+                    <button class="atoz-letter-pill" data-letter="E">E</button>
+                    <button class="atoz-letter-pill" data-letter="F">F</button>
+                    <button class="atoz-letter-pill" data-letter="G">G</button>
+                    <button class="atoz-letter-pill" data-letter="H">H</button>
+                    <button class="atoz-letter-pill" data-letter="I">I</button>
+                    <button class="atoz-letter-pill" data-letter="J">J</button>
+                    <button class="atoz-letter-pill" data-letter="K">K</button>
+                    <button class="atoz-letter-pill" data-letter="L">L</button>
+                    <button class="atoz-letter-pill" data-letter="M">M</button>
+                    <button class="atoz-letter-pill" data-letter="N">N</button>
+                    <button class="atoz-letter-pill" data-letter="O">O</button>
+                    <button class="atoz-letter-pill" data-letter="P">P</button>
+                    <button class="atoz-letter-pill" data-letter="Q">Q</button>
+                    <button class="atoz-letter-pill" data-letter="R">R</button>
+                    <button class="atoz-letter-pill" data-letter="S">S</button>
+                    <button class="atoz-letter-pill" data-letter="T">T</button>
+                    <button class="atoz-letter-pill" data-letter="U">U</button>
+                    <button class="atoz-letter-pill" data-letter="V">V</button>
+                    <button class="atoz-letter-pill" data-letter="W">W</button>
+                    <button class="atoz-letter-pill" data-letter="X">X</button>
+                    <button class="atoz-letter-pill" data-letter="Y">Y</button>
+                    <button class="atoz-letter-pill" data-letter="Z">Z</button>
+                    <button class="atoz-letter-pill" data-letter="num">#</button>
+                    <button class="atoz-fetch-all-btn" id="atoz-fetch-all-btn" title="Fetch All A-Z Movies from API">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span id="atoz-fetch-label">⚡ Fetch All A-Z (API)</span>
+                    </button>
+                </div>
+
+                <!-- SECTION 1: CONTINUE WATCHING (HERO BANNER CARD + ADJACENT POSTER CARDS) -->
+                <section class="spatial-section" id="section-continue-watching">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Continue Watching</h2>
+                        <div class="section-arrow-btn">›</div>
+                    </div>
+
+                    <div class="spatial-hero-grid">
+                        <!-- BIG HERO FEATURED BANNER CARD (WITH LIVE HOVER VIDEO & AMBIENT GLOW) -->
+                        <div class="vision-hero-card" id="hero-billboard">
+                            <!-- Live Interactive Video Trailer Layer -->
+                            <div class="hero-video-layer hidden" id="hero-video-layer"></div>
+                            
+                            <!-- Static/Dynamic Background Image -->
+                            <div class="hero-backdrop-img" id="hero-backdrop-img"></div>
+                            <div class="hero-card-gradient"></div>
+
+                            <!-- Live Sound Toggle Button -->
+                            <div class="hero-sound-wrapper">
+                                <button class="hero-sound-btn" id="hero-sound-btn" title="Toggle Sound">
+                                    <svg class="sound-icon-muted" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                                    <svg class="sound-icon-unmuted hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                                </button>
+                            </div>
+
+                            <!-- Hero Content Body -->
+                            <div class="hero-card-content">
+                                <div class="hero-series-tag">
+                                    <span class="n-mark">D</span>
+                                    <span id="hero-type-badge">SERIES</span>
+                                    <span class="live-preview-tag hidden" id="live-preview-tag">● PREVIEWING</span>
+                                </div>
+                                
+                                <h1 class="hero-featured-title" id="hero-title">STRANGER THINGS</h1>
+
+                                <div class="hero-meta-badges">
+                                    <span class="badge-match" id="hero-match">98% Match</span>
+                                    <span class="badge-year" id="hero-year">2022</span>
+                                    <span class="badge-seasons" id="hero-duration">4 Seasons</span>
+                                    <span class="badge-tech">4K</span>
+                                    <span class="badge-genre" id="hero-genres">Sci-Fi • Horror • Mystery</span>
+                                </div>
+
+                                <p class="hero-description-text" id="hero-overview">
+                                    When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying forces, and one strange little girl.
+                                </p>
+
+                                <div class="hero-card-buttons">
+                                    <button class="hero-btn-play" id="hero-play-button">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                                        <span>Play</span>
+                                    </button>
+                                    <button class="hero-btn-info" id="hero-info-button">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                                        <span>More Info</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Carousel Dots Indicator -->
+                            <div class="hero-card-dots">
+                                <span class="dot active"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
+
+                        <!-- TWO ADJACENT FEATURED POSTER CARDS -->
+                        <div class="featured-side-posters" id="featured-side-posters">
+                            <!-- Injected dynamically: Night Agent, Wednesday, etc. -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: LATEST RELEASES (2025 - 2026 BLOCKBUSTERS) -->
+                <section class="spatial-section" id="section-latest-2026">
+                    <div class="section-title-row">
+                        <div style="display:flex;align-items:center;gap:0.75rem;">
+                            <h2 class="spatial-section-heading">🔥 Latest Blockbusters (2025 - 2026)</h2>
+                            <span class="live-preview-tag" style="background:var(--accent-green);font-size:0.7rem;animation:none;">NEW 2026</span>
+                        </div>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="latest-rail">
+                            <!-- Dynamically populated 2026 & 2025 posters -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: NEW & POPULAR / TRENDING ROW -->
+                <section class="spatial-section" id="section-new-popular">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">New & Popular</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="trending-rail">
+                            <!-- Dynamically populated posters -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: TOP 10 IN MOVIES TODAY -->
+                <section class="spatial-section" id="section-top10">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Top 10 in Movies Today</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="top10-rail">
+                            <!-- Dynamically populated with numbered ranks -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: BINGE-WORTHY TV SERIES -->
+                <section class="spatial-section" id="section-tv-series">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Binge-Worthy TV Shows</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="tvseries-rail">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: ACTION & ADVENTURE -->
+                <section class="spatial-section" id="section-action">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Blockbuster Action & Adventure</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="action-rail">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 6: SCI-FI & FANTASY -->
+                <section class="spatial-section" id="section-scifi">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Mind-Bending Sci-Fi</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="scifi-rail">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 7: HORROR & THRILLER -->
+                <section class="spatial-section" id="section-horror">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading">Horror & Suspense</h2>
+                        <div class="rail-nav-buttons">
+                            <button class="rail-toggle-btn prev" title="Scroll Left">‹</button>
+                            <button class="rail-toggle-btn next" title="Scroll Right">›</button>
+                        </div>
+                    </div>
+
+                    <div class="spatial-card-row-wrapper">
+                        <div class="spatial-card-row" id="horror-rail">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FILTERED GRID SECTION (Triggered on Genre/Country Click or Search) -->
+                <section class="spatial-section hidden" id="filtered-view-section">
+                    <div class="section-title-row">
+                        <h2 class="spatial-section-heading" id="filtered-view-title">Filtered Titles</h2>
+                        <span id="filtered-count" class="filtered-badge-count"></span>
+                    </div>
+
+                    <div class="filtered-cards-grid" id="filtered-grid">
+                        <!-- Dynamically Populated -->
+                    </div>
+
+                    <div class="load-more-container">
+                        <button class="hero-btn-info" id="load-more-btn">
+                            <span>Load More Titles</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- BRAND FOOTER -->
+                <footer class="vision-footer">
+                    <div class="footer-center">
+                        <div class="footer-logo">
+                            <span class="f-d">DEV</span><span class="f-f">FLIX</span>
+                        </div>
+                        <p class="footer-credit">Developed by <span class="credit-dev">DevIrfan</span></p>
+                        <p class="footer-sub">© 2026 DevFlix Spatial Edition • Ultra-Fast Cinema Streaming</p>
+                    </div>
+                </footer>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- DEVFLIX INTERACTIVE PREVIEW & RECOMMENDED MODAL (FROSTED GLASS EFFECT) -->
+    <div class="netflix-modal-backdrop hidden" id="info-modal">
+        <div class="vision-modal-glass">
+            <div class="dialog-hero" id="dialog-hero-bg">
+                <div class="dialog-hero-gradient"></div>
+                <button class="dialog-close-btn" id="dialog-close-btn" title="Close (Esc)">&times;</button>
+                <div class="dialog-floating-actions">
+                    <button class="hero-btn-play" id="dialog-play-btn" style="box-shadow: 0 4px 20px rgba(229, 9, 20, 0.6); background:#e50914; color:#fff;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        <span>Play Now</span>
+                    </button>
+                    <button class="hero-btn-info" id="dialog-watchlist-btn">
+                        <span id="dialog-watchlist-text">+ My List</span>
+                    </button>
+                </div>
+            </div>
+            <div class="dialog-body">
+                <div class="dialog-main-info">
+                    <h2 class="dialog-title" id="dialog-title">Movie Title</h2>
+                    <div class="dialog-badges">
+                        <span class="badge-match" id="dialog-match">98% Match</span>
+                        <span id="dialog-year">2024</span>
+                        <span class="badge-tech" id="dialog-age">16+</span>
+                        <span id="dialog-duration">2h 15m</span>
+                        <span class="badge-tech">Ultra HD 4K</span>
+                    </div>
+                    <p class="dialog-overview" id="dialog-overview"></p>
+                </div>
+                <div class="dialog-side-info">
+                    <div>Genres: <span id="dialog-genres">Action, Adventure</span></div>
+                    <div>Audio: <span>English, Malay, Spanish</span></div>
+                    <div>Subtitles: <span>English, Bahasa Melayu</span></div>
+                    <div>Streaming: <span style="color:#22c55e;font-weight:700;">HD 1080p / 4K Ready</span></div>
+                </div>
+            </div>
+
+            <!-- MORE LIKE THIS / RECOMMENDED MOVIES SECTION -->
+            <div class="dialog-recommended-section">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+                    <h3 class="dialog-recommended-title" style="margin-bottom:0;">More Like This</h3>
+                    <span style="font-size:0.82rem;color:rgba(255,255,255,0.6);">Recommended for you</span>
+                </div>
+                <div class="dialog-recommended-grid" id="dialog-recommended-grid">
+                    <!-- Recommended cards populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEAMLESS FULLSCREEN TV STREAMING PLAYER -->
+    <div class="tv-player-view hidden" id="tv-player">
+        <div class="player-tv-bar">
+            <div class="player-back-nav" id="player-back-nav">
+                <button class="player-back-btn" title="Back to DevFlix">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <div>
+                    <h3 class="player-title-tv" id="player-title-display">Movie Title</h3>
+                    <p class="player-episode-subtitle" id="player-episode-display"></p>
+                </div>
+            </div>
+
+            <div class="player-quick-tools">
+                <!-- Ad Shield Active Indicator -->
+                <div class="adshield-badge" id="adshield-status" title="AdShield Aktif: Anti-Redirect & Anti-Framebusting dihidupkan">
+                    <span class="adshield-dot"></span>
+                    <span class="adshield-text" id="adshield-label">🛡️ Ad Shield: Active</span>
+                </div>
+
+                <!-- TV Episode Selector if Series -->
+                <div id="tv-ep-controls" class="hidden" style="display:flex;align-items:center;gap:0.5rem;">
+                    <select id="player-season-select" class="tv-server-picker"></select>
+                    <select id="player-episode-select" class="tv-server-picker"></select>
+                    <button class="tv-ep-picker-btn" id="player-next-ep-btn">Next Ep ▶</button>
+                </div>
+
+                <!-- Server Quality Switcher -->
+                <select id="player-server-select" class="tv-server-picker" title="Stream Server"></select>
+
+                <!-- Next Server Button if current is buffering -->
+                <button class="tv-ep-picker-btn" id="player-next-server-btn" title="Switch to Backup Server">⚡ Next Server</button>
+
+                <button class="player-back-btn" id="player-fullscreen-btn" title="Fullscreen">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="player-frame-wrapper">
+            <iframe id="player-screen-iframe" 
+                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
+                    allowfullscreen 
+                    referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation Bar (Floating Frosted Glass) -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <a class="bottom-nav-item active" data-view="home">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+        </a>
+        <a class="bottom-nav-item" data-view="movies">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+            <span>Movies</span>
+        </a>
+        <a class="bottom-nav-item" data-view="series">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+            <span>Dramas</span>
+        </a>
+        <a class="bottom-nav-item" data-view="atoz">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            <span>A - Z</span>
+        </a>
+        <a class="bottom-nav-item" data-view="watchlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>My List</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="js/adblock.js"></script>
+    <script src="js/servers.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

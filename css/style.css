@@ -1013,6 +1013,19 @@ body.vision-spatial-body {
     display: block;
 }
 
+.hero-video-layer iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 140%;
+    height: 140%;
+    transform: translate(-50%, -50%) scale(1.35);
+    pointer-events: none;
+    border: none;
+    outline: none;
+    display: block;
+}
+
 .hero-card-gradient {
     position: absolute;
     inset: 0;

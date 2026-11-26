@@ -444,6 +444,34 @@ body.vision-spatial-body {
     flex-shrink: 0;
 }
 
+.shuffle-btn-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 36px;
+    padding: 0 0.85rem;
+    border-radius: 10px;
+    background: rgba(229, 9, 20, 0.18);
+    border: 1px solid rgba(229, 9, 20, 0.45);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.shuffle-btn-glass:hover {
+    background: var(--netflix-red);
+    border-color: var(--netflix-red);
+    box-shadow: 0 4px 16px rgba(229, 9, 20, 0.45);
+    transform: translateY(-2px);
+}
+
+.shuffle-btn-glass:active {
+    transform: scale(0.95);
+}
+
 /* Shadcn-Style Glass Select Trigger */
 .sort-wrapper {
     position: relative;
@@ -568,6 +596,41 @@ body.vision-spatial-body {
     color: #000000;
     border-color: #ffffff;
     box-shadow: 0 4px 14px rgba(255, 255, 255, 0.28);
+}
+
+.atoz-search-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0 0.75rem;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    flex-shrink: 0;
+    margin-left: 0.35rem;
+    transition: all 0.25s ease;
+}
+
+.atoz-search-box:focus-within {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.12);
+}
+
+.atoz-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    font-size: 0.78rem;
+    width: 145px;
+    font-family: inherit;
+}
+
+.atoz-search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .atoz-fetch-all-btn {
@@ -1364,7 +1427,7 @@ body.vision-spatial-body {
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(28px);
     -webkit-backdrop-filter: blur(28px);
-    z-index: 1000;
+    z-index: 30000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2159,6 +2222,16 @@ body.vision-spatial-body {
         height: 28px;
         font-size: 0.72rem;
         border-radius: 8px;
+    }
+
+    .atoz-search-box {
+        height: 28px;
+        padding: 0 0.5rem;
+    }
+
+    .atoz-search-box input {
+        width: 105px;
+        font-size: 0.72rem;
     }
 
     /* Fullscreen Player Responsive */

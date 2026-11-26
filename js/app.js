@@ -58,6 +58,15 @@ function getBestPosterUrl(item) {
     return getFallbackPoster(item.title, item.year);
 }
 
+function shuffleArray(array) {
+    const arr = [...(array || [])];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 // K-DRAMA & KOREAN CINEMA COLLECTION
 const KOREAN_DRAMAS_COLLECTION = [
     { id: 'tt10919420', title: 'Squid Game', type: 'series', year: '2021', country: 'Korea', genres: 'Action, Drama, Mystery', matchScore: 99, match: '99% Match', duration: '2 Seasons', age: '18+', overview: 'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games with deadly high stakes.' },
@@ -975,7 +984,7 @@ class NetflixApp {
         this.selectedMedia = null;
         this.currentHero = null;
         this.watchlistKey = 'devflix_user_watchlist';
-        this.cacheKey = 'devflix_api_catalog_cache_v4';
+        this.cacheKey = 'devflix_api_catalog_cache_v5';
         this.currentGenre = 'all';
         this.currentCountry = 'all';
         this.currentSort = 'featured';
@@ -1021,14 +1030,14 @@ class NetflixApp {
     }
 
     applyApiCatalogs(data) {
-        this.latestMovies = data.latest || [];
-        this.top10Movies = data.top10 || [];
-        this.trendingMovies = data.trending || [];
-        this.popularSeries = data.series || [];
-        this.actionMovies = data.action || [];
-        this.scifiMovies = data.scifi || [];
-        this.horrorMovies = data.horror || [];
-        this.dramaMovies = data.drama || [];
+        this.latestMovies = shuffleArray(data.latest || [...LATEST_2026_MOVIES]);
+        this.top10Movies = shuffleArray(data.top10 || [...NETFLIX_TOP_10]).slice(0, 10);
+        this.trendingMovies = shuffleArray(data.trending || [...TRENDING_MOVIES]).slice(0, 18);
+        this.popularSeries = shuffleArray(data.series || [...POPULAR_TV_SERIES]);
+        this.actionMovies = shuffleArray(data.action || [...ACTION_MOVIES]);
+        this.scifiMovies = shuffleArray(data.scifi || [...SCIFI_MOVIES]);
+        this.horrorMovies = shuffleArray(data.horror || [...HORROR_MOVIES]);
+        this.dramaMovies = shuffleArray(data.drama || [...DRAMA_MOVIES]);
 
         this.allTitles = this.deduplicateTitles([
             ...this.latestMovies,
@@ -1041,15 +1050,15 @@ class NetflixApp {
             ...this.dramaMovies
         ]);
 
-        if (!this.currentHero && this.allTitles.length > 0) {
-            this.currentHero = this.trendingMovies[0] || this.top10Movies[0] || this.allTitles[0];
+        if (this.allTitles.length > 0) {
+            this.currentHero = this.latestMovies[0] || this.top10Movies[0] || this.allTitles[0];
         }
     }
 
     applyFallbackCatalogs() {
-        this.latestMovies = [...LATEST_2026_MOVIES];
-        this.top10Movies = [...NETFLIX_TOP_10];
-        this.trendingMovies = [...TRENDING_MOVIES];
+        this.latestMovies = shuffleArray([...LATEST_2026_MOVIES]);
+        this.top10Movies = shuffleArray([...NETFLIX_TOP_10]).slice(0, 10);
+        this.trendingMovies = shuffleArray([...TRENDING_MOVIES]).slice(0, 18);
         this.popularSeries = [...POPULAR_TV_SERIES];
         this.actionMovies = [...ACTION_MOVIES];
         this.scifiMovies = [...SCIFI_MOVIES];
@@ -1096,6 +1105,17 @@ class NetflixApp {
         this.setupLoadMore();
         this.setupSoundToggle();
 
+        // Dedicated Shuffle & Randomize Button
+        const shuffleBtn = document.getElementById('shuffle-rails-btn');
+        if (shuffleBtn) {
+            shuffleBtn.onclick = (e) => {
+                e.preventDefault();
+                shuffleBtn.classList.add('active');
+                this.randomizeAndRenderAll();
+                setTimeout(() => shuffleBtn.classList.remove('active'), 300);
+            };
+        }
+
         // Listen for history updates
         window.addEventListener('netflix_history_changed', () => {
             this.renderContinueWatching();
@@ -1104,6 +1124,16 @@ class NetflixApp {
 
         // Pull dynamic live titles from Cinemeta API in real-time!
         this.fetchLiveCinemetaCatalogs();
+    }
+
+    randomizeAndRenderAll() {
+        this.latestMovies = shuffleArray(this.latestMovies);
+        this.top10Movies = shuffleArray(this.allTitles.filter(m => m.type === 'movie')).slice(0, 10);
+        this.trendingMovies = shuffleArray(this.allTitles).filter(m => !this.top10Movies.some(t => t.id === m.id)).slice(0, 18);
+        this.currentHero = this.latestMovies[0] || this.top10Movies[0];
+        this.renderAllRails();
+        this.renderFeaturedSidePosters();
+        if (this.currentHero) this.updateHeroDisplay(this.currentHero, false);
     }
 
     renderAllSkeletons() {
@@ -1144,39 +1174,60 @@ class NetflixApp {
                 this.renderAllSkeletons();
             }
 
-            // Real-time parallel fetch across Cinemeta catalogs (No API key needed, unlimited, fast CDN)
-            const [topMoviesRaw, topSeriesRaw, actionRaw, scifiRaw, horrorRaw, dramaRaw] = await Promise.all([
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/movie/top.json'),
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/series/top.json'),
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/movie/top/genre=Action.json'),
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/movie/top/genre=Sci-Fi.json'),
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/movie/top/genre=Horror.json'),
-                fetchCatalog('https://v3-cinemeta.strem.io/catalog/movie/top/genre=Drama.json')
+            // Dynamic random skip offsets for Cinemeta catalog
+            const skip1 = Math.floor(Math.random() * 6) * 20; // 0, 20, 40, 60, 80, 100
+            const skip2 = Math.floor(Math.random() * 6) * 20 + 10;
+            const genresPool = ['Action', 'Sci-Fi', 'Horror', 'Drama', 'Adventure', 'Comedy', 'Thriller', 'Animation'];
+            const randomGenre1 = genresPool[Math.floor(Math.random() * genresPool.length)];
+            const randomGenre2 = genresPool[(Math.floor(Math.random() * genresPool.length) + 1) % genresPool.length];
+
+            const [
+                topMovies1Raw,
+                topMovies2Raw,
+                genre1Raw,
+                genre2Raw,
+                topSeriesRaw
+            ] = await Promise.all([
+                fetchCatalog(`https://v3-cinemeta.strem.io/catalog/movie/top/skip=${skip1}.json`),
+                fetchCatalog(`https://v3-cinemeta.strem.io/catalog/movie/top/skip=${skip2}.json`),
+                fetchCatalog(`https://v3-cinemeta.strem.io/catalog/movie/top/genre=${randomGenre1}.json`),
+                fetchCatalog(`https://v3-cinemeta.strem.io/catalog/movie/top/genre=${randomGenre2}.json`),
+                fetchCatalog(`https://v3-cinemeta.strem.io/catalog/series/top/skip=${Math.floor(Math.random() * 4) * 20}.json`)
             ]);
 
-            const topMovies = topMoviesRaw.map(m => formatCinemetaItem(m, 'movie'));
+            const topMovies = this.deduplicateTitles([
+                ...topMovies1Raw.map(m => formatCinemetaItem(m, 'movie')),
+                ...topMovies2Raw.map(m => formatCinemetaItem(m, 'movie')),
+                ...genre1Raw.map(m => formatCinemetaItem(m, 'movie')),
+                ...genre2Raw.map(m => formatCinemetaItem(m, 'movie'))
+            ]);
             const topSeries = topSeriesRaw.map(m => formatCinemetaItem(m, 'series'));
-            const action = actionRaw.map(m => formatCinemetaItem(m, 'movie'));
-            const scifi = scifiRaw.map(m => formatCinemetaItem(m, 'movie'));
-            const horror = horrorRaw.map(m => formatCinemetaItem(m, 'movie'));
-            const drama = dramaRaw.map(m => formatCinemetaItem(m, 'movie'));
 
             if (topMovies.length > 0) {
-                // Filter 2024 - 2026 releases for Latest Blockbusters
-                const latest = topMovies.filter(m => parseInt(m.year, 10) >= 2024);
-                const latestList = latest.length >= 6 ? latest.slice(0, 12) : topMovies.slice(0, 10);
-                const top10List = topMovies.slice(0, 10);
-                const trendingList = topMovies.slice(10, 25);
+                // Filter recent blockbusters (2024 - 2026)
+                const allRecent = topMovies.filter(m => parseInt(m.year, 10) >= 2024);
+                const latestPool = allRecent.length >= 6 ? allRecent : topMovies;
+
+                // 1. RANDOMIZE Latest Blockbusters (2025 - 2026) - shuffled from huge pool + 2026 fallbacks
+                const randomizedLatest = shuffleArray([...latestPool, ...LATEST_2026_MOVIES]).slice(0, 15);
+
+                // 2. RANDOMIZE Top 10 in Movies Today - shuffled from top movies + NETFLIX_TOP_10
+                const randomizedTop10 = shuffleArray([...topMovies, ...NETFLIX_TOP_10]).slice(0, 10);
+
+                // 3. RANDOMIZE New & Popular (Trending) - shuffled from remaining pool
+                const randomizedTrending = shuffleArray([...topMovies, ...TRENDING_MOVIES])
+                    .filter(m => !randomizedTop10.some(t => t.id === m.id))
+                    .slice(0, 18);
 
                 const freshCatalogs = {
-                    latest: latestList,
-                    top10: top10List,
-                    trending: trendingList,
-                    series: topSeries.slice(0, 15),
-                    action: action.slice(0, 15),
-                    scifi: scifi.slice(0, 15),
-                    horror: horror.slice(0, 15),
-                    drama: drama.slice(0, 15),
+                    latest: randomizedLatest,
+                    top10: randomizedTop10,
+                    trending: randomizedTrending,
+                    series: shuffleArray(topSeries).slice(0, 15),
+                    action: shuffleArray(genre1Raw.map(m => formatCinemetaItem(m, 'movie'))).slice(0, 15),
+                    scifi: shuffleArray(genre2Raw.map(m => formatCinemetaItem(m, 'movie'))).slice(0, 15),
+                    horror: shuffleArray(this.horrorMovies).slice(0, 15),
+                    drama: shuffleArray(this.dramaMovies).slice(0, 15),
                     timestamp: Date.now()
                 };
 
@@ -1380,12 +1431,17 @@ class NetflixApp {
         card.onblur = () => this.onLeaveCard();
 
         // Click / Enter: opens the interactive Preview & Recommendations modal!
-        card.onclick = () => {
+        card.onclick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             this.onLeaveCard();
             this.openInfoModal(item);
         };
         card.onkeydown = (e) => {
             if (e.key === 'Enter') {
+                if (e) e.preventDefault();
                 this.onLeaveCard();
                 this.openInfoModal(item);
             }
@@ -1699,10 +1755,38 @@ class NetflixApp {
         document.querySelectorAll('.atoz-letter-pill').forEach(btn => {
             btn.onclick = (e) => {
                 e.preventDefault();
+                const atozSearch = document.getElementById('atoz-search-input');
+                if (atozSearch) atozSearch.value = '';
                 const letter = btn.getAttribute('data-letter') || 'all';
                 this.browseAtoZ(letter);
             };
         });
+
+        // Dedicated A - Z Instant Search Box
+        const atozSearch = document.getElementById('atoz-search-input');
+        if (atozSearch) {
+            let searchTimer = null;
+            atozSearch.oninput = () => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    const q = atozSearch.value.trim();
+                    if (!q) {
+                        const activeLetterBtn = document.querySelector('.atoz-letter-pill.active');
+                        const letter = activeLetterBtn ? activeLetterBtn.getAttribute('data-letter') : 'all';
+                        this.browseAtoZ(letter);
+                    } else {
+                        this.searchAtoZ(q);
+                    }
+                }, 200);
+            };
+
+            atozSearch.onkeydown = (e) => {
+                if (e.key === 'Escape') {
+                    atozSearch.value = '';
+                    this.browseAtoZ('all');
+                }
+            };
+        }
 
         // "Fetch All A-Z" bulk crawler button
         const fetchAllBtn = document.getElementById('atoz-fetch-all-btn');
@@ -1712,6 +1796,70 @@ class NetflixApp {
                 this.fetchAllAtoZMovies();
             };
         }
+    }
+
+    searchAtoZ(query) {
+        const filteredSection = document.getElementById('filtered-view-section');
+        const filteredGrid = document.getElementById('filtered-grid');
+        const filteredTitle = document.getElementById('filtered-view-title');
+        const filteredCount = document.getElementById('filtered-count');
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        const regularSections = document.querySelectorAll('.spatial-section:not(#filtered-view-section)');
+
+        regularSections.forEach(sec => sec.classList.add('hidden'));
+        if (filteredSection) filteredSection.classList.remove('hidden');
+
+        document.querySelectorAll('.atoz-letter-pill').forEach(btn => btn.classList.remove('active'));
+
+        const q = query.toLowerCase();
+        const matches = this.allTitles.filter(t => 
+            (t.title && t.title.toLowerCase().includes(q)) ||
+            (t.genres && t.genres.toLowerCase().includes(q))
+        ).sort((a, b) => a.title.localeCompare(b.title));
+
+        if (filteredTitle) filteredTitle.textContent = `🔍 A - Z Search: "${query}"`;
+        if (filteredCount) filteredCount.textContent = `(${matches.length} titles found)`;
+
+        if (filteredGrid) {
+            filteredGrid.innerHTML = '';
+            if (matches.length === 0) {
+                filteredGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: #a3a3a3;">
+                        <p style="font-size: 1.15rem; font-weight: 700; color: #ffffff;">No titles found for "${query}"</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.4rem;">Try searching another keyword or browsing by letter.</p>
+                    </div>
+                `;
+            } else {
+                matches.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'vision-mini-card';
+                    card.tabIndex = 0;
+                    card.style.flex = 'unset';
+                    card.style.width = '100%';
+                    card.style.minWidth = '0';
+                    card.style.height = '270px';
+                    card.style.cursor = 'pointer';
+                    const posterSrc = getBestPosterUrl(item);
+                    const typeLabel = item.type === 'series' ? 'SERIES' : 'FILM';
+
+                    card.innerHTML = `
+                        <img class="mini-poster" src="${posterSrc}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer"
+                             data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-year="${item.year || ''}" onerror="window.handleImgError(this)">
+                        <div class="mini-card-gradient"></div>
+                        <div class="mini-card-info">
+                            <span class="tag">${typeLabel}</span>
+                            <h4 class="title">${item.title}</h4>
+                            <span class="genre">${item.match || '98% Match'} • ${item.year}</span>
+                        </div>
+                    `;
+
+                    this.attachCardInteractions(card, item);
+                    filteredGrid.appendChild(card);
+                });
+            }
+        }
+
+        if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
     }
 
     browseAtoZ(letter = 'all') {
@@ -1734,23 +1882,24 @@ class NetflixApp {
         // Filter and sort titles
         let matches = [];
         if (letter === 'all') {
-            matches = [...this.allTitles].sort((a, b) => a.title.localeCompare(b.title));
+            matches = [...this.allTitles].sort((a, b) => (a.title || '').localeCompare(b.title || ''));
             if (filteredTitle) filteredTitle.textContent = 'A - Z Directory (All Titles)';
         } else if (letter === 'num') {
             matches = this.allTitles.filter(item => {
-                const clean = item.title.replace(/^(the|a|an)\s+/i, '').trim();
+                const clean = (item.title || '').replace(/^(the|a|an)\s+/i, '').trim();
                 return /^[0-9]/.test(clean);
-            }).sort((a, b) => a.title.localeCompare(b.title));
+            }).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
             if (filteredTitle) filteredTitle.textContent = 'A - Z Directory: Numeric (#)';
         } else {
             const targetChar = letter.toUpperCase();
             matches = this.allTitles.filter(item => {
-                const clean = item.title.replace(/^(the|a|an)\s+/i, '').trim().toUpperCase();
-                return clean.startsWith(targetChar) || item.title.toUpperCase().startsWith(targetChar);
-            }).sort((a, b) => a.title.localeCompare(b.title));
+                const titleStr = item.title || '';
+                const clean = titleStr.replace(/^(the|a|an)\s+/i, '').trim().toUpperCase();
+                return clean.startsWith(targetChar) || titleStr.toUpperCase().startsWith(targetChar);
+            }).sort((a, b) => (a.title || '').localeCompare(b.title || ''));
             if (filteredTitle) filteredTitle.textContent = `A - Z Directory: Letter "${targetChar}"`;
 
-            // If few or no results found, automatically fetch from Cinemeta API in real time!
+            // If few or no results found, automatically fetch from Cinemeta API once!
             if (matches.length < 15) {
                 this.fetchSpecificLetter(letter);
             }
@@ -1773,12 +1922,17 @@ class NetflixApp {
                     const card = document.createElement('div');
                     card.className = 'vision-mini-card';
                     card.tabIndex = 0;
+                    card.style.flex = 'unset';
+                    card.style.width = '100%';
+                    card.style.minWidth = '0';
+                    card.style.height = '270px';
+                    card.style.cursor = 'pointer';
                     const posterSrc = getBestPosterUrl(item);
                     const typeLabel = item.type === 'series' ? 'SERIES' : 'FILM';
 
                     card.innerHTML = `
                         <img class="mini-poster" src="${posterSrc}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer"
-                             data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-year="${item.year || ''}" onerror="window.handleImgError(this)">
+                             data-id="${item.id}" data-title="${encodeURIComponent(item.title || '')}" data-year="${item.year || ''}" onerror="window.handleImgError(this)">
                         <div class="mini-card-gradient"></div>
                         <div class="mini-card-info">
                             <span class="tag">${typeLabel}</span>
@@ -1798,6 +1952,11 @@ class NetflixApp {
     }
 
     async fetchSpecificLetter(letter) {
+        if (!this.fetchedLetters) this.fetchedLetters = new Set();
+        const lKey = String(letter).toUpperCase();
+        if (this.fetchedLetters.has(lKey)) return;
+        this.fetchedLetters.add(lKey);
+
         try {
             const res = await fetch(`https://v3-cinemeta.strem.io/catalog/movie/top/search=${encodeURIComponent(letter)}.json`);
             if (res.ok) {
@@ -2002,8 +2161,16 @@ class NetflixApp {
     // INTERACTIVE PREVIEW MODAL & RECOMMENDED MOVIES
     // ==========================================================
     openInfoModal(media) {
+        if (!media) return;
         this.selectedMedia = media;
         const modal = document.getElementById('info-modal');
+        if (!modal) return;
+
+        // Close mobile sidebar/drawer if open
+        if (typeof this.closeMobileDrawer === 'function') {
+            this.closeMobileDrawer();
+        }
+
         const bg = document.getElementById('dialog-hero-bg');
         const title = document.getElementById('dialog-title');
         const overview = document.getElementById('dialog-overview');
@@ -2014,12 +2181,12 @@ class NetflixApp {
         const match = document.getElementById('dialog-match');
 
         if (bg) {
-            const bgUrl = media.background || `https://images.metahub.space/background/medium/${media.id}/img`;
-            bg.style.backgroundImage = `url('${bgUrl}')`;
+            const bgUrl = media.background || (media.id ? `https://images.metahub.space/background/medium/${media.id}/img` : '');
+            bg.style.backgroundImage = bgUrl ? `url('${bgUrl}')` : 'none';
         }
-        if (title) title.textContent = media.title;
-        if (overview) overview.textContent = media.overview;
-        if (year) year.textContent = media.year;
+        if (title) title.textContent = media.title || 'Untitled';
+        if (overview) overview.textContent = media.overview || 'Watch now with ultra-fast multi-server streaming on DevFlix.';
+        if (year) year.textContent = media.year || '2025';
         if (age) age.textContent = media.age || '16+';
         if (duration) duration.textContent = media.duration || (media.type === 'series' ? 'TV Series' : '2h 15m');
         if (genres) genres.textContent = media.genres || 'Action, Drama';
@@ -2027,7 +2194,8 @@ class NetflixApp {
 
         const playBtn = document.getElementById('dialog-play-btn');
         if (playBtn) {
-            playBtn.onclick = () => {
+            playBtn.onclick = (e) => {
+                if (e) e.stopPropagation();
                 modal.classList.add('hidden');
                 if (window.netflixPlayer) window.netflixPlayer.play(media);
             };
@@ -2035,16 +2203,22 @@ class NetflixApp {
 
         const watchlistBtn = document.getElementById('dialog-watchlist-btn');
         if (watchlistBtn) {
-            watchlistBtn.onclick = () => this.toggleWatchlist(media);
+            watchlistBtn.onclick = (e) => {
+                if (e) e.stopPropagation();
+                this.toggleWatchlist(media);
+            };
         }
 
-        // Render Recommended Movies in modal
-        this.renderRecommendedInModal(media);
+        // Show modal immediately
+        modal.classList.remove('hidden');
+        const dialog = modal.querySelector('.vision-modal-glass, .netflix-dialog');
+        if (dialog) dialog.scrollTo({ top: 0, behavior: 'auto' });
 
-        if (modal) {
-            modal.classList.remove('hidden');
-            const dialog = modal.querySelector('.netflix-dialog');
-            if (dialog) dialog.scrollTo({ top: 0, behavior: 'auto' });
+        // Safe render of recommended movies
+        try {
+            this.renderRecommendedInModal(media);
+        } catch (err) {
+            console.warn('Error rendering modal recommendations:', err);
         }
     }
 
@@ -2055,25 +2229,26 @@ class NetflixApp {
 
         const mediaGenres = (media.genres || '').toLowerCase().split(',').map(g => g.trim());
 
-        const recommended = this.allTitles.filter(item => {
-            if (item.id === media.id) return false;
+        const recommended = (this.allTitles || []).filter(item => {
+            if (!item || !item.id || item.id === media.id) return false;
             const itemGenres = (item.genres || '').toLowerCase();
             return mediaGenres.some(g => g && itemGenres.includes(g));
         }).slice(0, 6);
 
         const finalRecs = recommended.length >= 3 
             ? recommended 
-            : this.allTitles.filter(i => i.id !== media.id).slice(0, 6);
+            : (this.allTitles || []).filter(i => i && i.id && i.id !== media.id).slice(0, 6);
 
         finalRecs.forEach(item => {
             const card = document.createElement('div');
             card.className = 'recommended-card';
+            card.style.cursor = 'pointer';
             const posterSrc = getBestPosterUrl(item);
 
             card.innerHTML = `
                 <div class="rec-poster">
-                    <img src="${posterSrc}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer"
-                         data-id="${item.id}" data-title="${encodeURIComponent(item.title)}" data-year="${item.year || ''}" onerror="window.handleImgError(this)">
+                    <img src="${posterSrc}" alt="${item.title || ''}" loading="lazy" referrerpolicy="no-referrer"
+                         data-id="${item.id}" data-title="${encodeURIComponent(item.title || '')}" data-year="${item.year || ''}" onerror="window.handleImgError(this)">
                     <div class="rec-play-overlay">
                         <div class="poster-play-icon">
                             <svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
@@ -2081,11 +2256,11 @@ class NetflixApp {
                     </div>
                 </div>
                 <div class="rec-body">
-                    <h5 class="rec-title">${item.title}</h5>
+                    <h5 class="rec-title">${item.title || 'Untitled'}</h5>
                     <div class="rec-meta">
                         <span class="match-score">${item.match || '96% Match'}</span>
                         <span class="age-badge">${item.age || '16+'}</span>
-                        <span style="color:#a3a3a3">${item.year}</span>
+                        <span style="color:#a3a3a3">${item.year || ''}</span>
                     </div>
                     <p class="rec-desc">${item.overview || ''}</p>
                 </div>
@@ -2093,7 +2268,7 @@ class NetflixApp {
 
             // Clicking recommended movie in modal updates the modal to that movie!
             card.onclick = (e) => {
-                e.stopPropagation();
+                if (e) e.stopPropagation();
                 this.openInfoModal(item);
             };
 
@@ -2620,6 +2795,11 @@ class NetflixApp {
         const modal = document.getElementById('info-modal');
         if (closeBtn && modal) {
             closeBtn.onclick = () => modal.classList.add('hidden');
+        }
+        if (modal) {
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.classList.add('hidden');
+            };
         }
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {

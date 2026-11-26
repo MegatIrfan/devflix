@@ -115,11 +115,11 @@
                 <!-- Sidebar Footer Info -->
                 <div class="sidebar-user-profile">
                     <div class="user-avatar-circle">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Irfan Avatar">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="User Avatar">
                     </div>
                     <div class="user-details">
-                        <span class="user-name">DevIrfan</span>
-                        <span class="user-status">Premium VIP</span>
+                        <span class="user-name">DevFlix User</span>
+                        <span class="user-status">Premium Member</span>
                     </div>
                 </div>
             </aside>
@@ -160,8 +160,12 @@
                         <button class="glass-pill" data-genre="Crime">Crime</button>
                     </div>
 
-                    <!-- Right Controls: Live Sort -->
+                    <!-- Right Controls: Live Sort & Shuffle -->
                     <div class="top-header-right">
+                        <button class="shuffle-btn-glass" id="shuffle-rails-btn" title="Randomize Movies & Rails">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+                            <span>🎲 Shuffle</span>
+                        </button>
                         <div class="sort-wrapper">
                             <svg class="sort-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
                             <span class="sort-tag">SORT</span>
@@ -206,6 +210,10 @@
                     <button class="atoz-letter-pill" data-letter="Y">Y</button>
                     <button class="atoz-letter-pill" data-letter="Z">Z</button>
                     <button class="atoz-letter-pill" data-letter="num">#</button>
+                    <div class="atoz-search-box">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="atoz-search-input" placeholder="Search A - Z titles..." autocomplete="off">
+                    </div>
                     <button class="atoz-fetch-all-btn" id="atoz-fetch-all-btn" title="Fetch All A-Z Movies from API">
                         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         <span id="atoz-fetch-label">⚡ Fetch All A-Z (API)</span>
@@ -432,7 +440,7 @@
                         <div class="footer-logo">
                             <span class="f-d">DEV</span><span class="f-f">FLIX</span>
                         </div>
-                        <p class="footer-credit">Developed by <span class="credit-dev">DevIrfan</span></p>
+                        <p class="footer-credit">Developed for <span class="credit-dev">DevFlix Spatial</span></p>
                         <p class="footer-sub">© 2026 DevFlix Spatial Edition • Ultra-Fast Cinema Streaming</p>
                     </div>
                 </footer>

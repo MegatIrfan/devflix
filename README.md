@@ -18,7 +18,7 @@ A sleek, responsive, and modern TV & Movie web application that allows you to br
 - **Watchlist & History**:
   - **Continue Watching** section that remembers what you watched, which server, and TV episode progress.
   - **My List** bookmarks saved locally in the browser (`localStorage`).
-- **Cinema UI**: Dark cinematic interface inspired by Apple TV and Netflix, optimized for Mobile, Desktop, and Smart TV browsers.
+- **Cinema UI**: Dark cinematic interface inspired by modern streaming TV platforms, optimized for Mobile, Desktop, and Smart TV browsers.
 
 ---
 
@@ -66,7 +66,7 @@ You can also directly open `c:\xampp\htdocs\tv\index.html` in Chrome, Edge, or F
 - **Non-Hosting Statement**: DevFlix **does not host, archive, upload, or broadcast any video or audio media files** on its own servers. All content metadata, posters, and summaries are queried via public open APIs (such as Cinemeta and IMDb).
 - **Embedded Content**: All video streams are rendered via direct client-side embeds from third-party hosting services across the public web. DevFlix has no ownership, control, or affiliation with any of the embedded server providers.
 - **Copyright Infringement & Takedown Requests**: If you are a copyright owner or legal representative and have questions regarding media hosted on third-party domains, please contact the respective external hosting providers directly, as DevFlix possesses no capability to remove files hosted on external networks.
-- **Trademarks**: All product names, logos, and brands mentioned belong to their respective owners. This application is an unofficial experimental project and is **not affiliated with, authorized, maintained, sponsored or endorsed by Netflix, IMDb, or any related entity**.
+- **Trademarks**: All product names, logos, and brands mentioned belong to their respective owners. This application is an unofficial experimental project and is **not affiliated with, authorized, maintained, sponsored or endorsed by any official streaming platform, IMDb, or related entity**.
 
 ---
 

@@ -982,11 +982,10 @@ body.vision-spatial-body {
     z-index: 1;
 }
 
-/* Live Interactive Video Trailer Overlay - Plays authentic YouTube trailer on hover */
+/* Clean Ambient Video Background - Zero Player Chrome, Zero Controls */
 .hero-video-layer {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     z-index: 2;
@@ -995,25 +994,23 @@ body.vision-spatial-body {
     pointer-events: none;
     transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     background: #000;
+    border-radius: inherit;
 }
 
 .hero-video-layer.active {
     opacity: 1 !important;
 }
 
-.hero-video-layer iframe,
 .hero-video-layer video {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100vw;
-    height: 56.25vw; /* 16:9 aspect ratio */
-    min-width: 100%;
-    min-height: 100%;
-    transform: translate(-50%, -50%) scale(1.18);
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     pointer-events: none;
     border: none;
-    object-fit: cover;
+    outline: none;
+    display: block;
 }
 
 .hero-card-gradient {

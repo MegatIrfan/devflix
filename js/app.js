@@ -1449,131 +1449,70 @@ class NetflixApp {
         const currentReqId = item.id;
         this.activeVideoReqId = currentReqId;
 
-        // 1. Check item pre-configured trailerKey or in-memory cache
-        let ytId = item.trailerKey || null;
-        if (!ytId && this.trailerCache && this.trailerCache[item.id]) {
-            ytId = this.trailerCache[item.id];
-        }
+        // Clean ambient background video loops - Zero mediaplayer controls, Zero YouTube UI overlays
+        const ambientClips = {
+            'tt10919420': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+            'tt4574334': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            'tt1190634': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            'tt13443470': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+            'tt6468322': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+            'tt14144734': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+            'tt0903747': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+            'tt0944947': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+            'tt1375666': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4',
+            'tt0816692': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            'tt11347146': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4',
+            'tt31908752': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+        };
 
-        // 2. High-reliability blockbuster trailer dictionary
-        if (!ytId) {
-            const KNOWN_TRAILERS = {
-                'tt10919420': 'oqxAJKy0ii4', // Squid Game
-                'tt4574334': 'b9EkMc79ZSU',  // Stranger Things
-                'tt1190634': 'Di310BC8zMg',  // Wednesday
-                'tt13443470': 'sq9L6n1T-W8', // The Night Agent
-                'tt6468322': '_InqQJRqGW4',  // Money Heist
-                'tt14144734': 'IN5TD4VRcZU', // All of Us Are Dead
-                'tt0903747': 'HhesaQXLuRY',  // Breaking Bad
-                'tt0944947': 'KPLWWIOCOOQ',  // Game of Thrones
-                'tt1375666': 'YoHD9XEInc0',  // Inception
-                'tt0816692': 'zSWdZVtXT7E',  // Interstellar
-                'tt0468569': 'EXeTwQWrcwY',  // The Dark Knight
-                'tt15239678': 'Way9Dexny3w', // Dune: Part Two
-                'tt15398776': 'uYPbbksJxIg', // Oppenheimer
-                'tt11347146': 'h1vfzjY5LXs', // Mat Kilau
-                'tt31908752': 'Y7vDskk7PqE', // Sheriff
-                'tt5132854': 'Gg4P2K_Ff4w',  // Polis Evo
-                'tt9063106': 'qH62UvU8r5g',  // PASKAL
-                'tt22024396': '8Y7fW2aC4j4',  // MALBATT
-                'tt30253785': 'NlE5d334KqY', // Pendekar Awang
-                'tt10872600': 'JfVOs4VSpmA', // Spider-Man: No Way Home
-                'tt1877830': '8g18jFHCLXk',  // The Batman
-                'tt6263850': 'mqqft2x_Aa4',  // Deadpool & Wolverine
-                'tt1517268': 'pBk4NYhWNMM',  // Barbie
-                'tt11194492': 'pZ1b14a2Y4o', // Wira
-                'tt14571464': 'lU8aP_gL46M'  // Air Force The Movie
-            };
-            if (KNOWN_TRAILERS[item.id]) {
-                ytId = KNOWN_TRAILERS[item.id];
-            }
-        }
+        const fallbackPool = [
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4'
+        ];
 
-        // 3. Dynamically fetch authentic YouTube trailer key from Cinemeta API
-        if (!ytId) {
-            try {
-                const mType = item.type || 'movie';
-                const metaRes = await fetch(`https://v3-cinemeta.strem.io/meta/${mType}/${item.id}.json`);
-                if (metaRes.ok) {
-                    const metaData = await metaRes.json();
-                    const meta = metaData && metaData.meta;
-                    if (meta) {
-                        if (meta.trailerStreams && meta.trailerStreams.length > 0 && meta.trailerStreams[0].ytId) {
-                            ytId = meta.trailerStreams[0].ytId;
-                        } else if (meta.trailers && meta.trailers.length > 0 && meta.trailers[0].source) {
-                            ytId = meta.trailers[0].source;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn('Cinemeta trailer lookup error:', e);
-            }
-        }
+        const clipUrl = ambientClips[item.id] || fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
 
-        if (ytId) {
-            if (!this.trailerCache) this.trailerCache = {};
-            this.trailerCache[item.id] = ytId;
-        }
-
-        // Check race condition
-        if (this.activeVideoReqId !== currentReqId) return;
-
+        // Clean previous video element
         videoLayer.innerHTML = '';
 
-        if (ytId) {
-            const iframe = document.createElement('iframe');
-            iframe.id = 'hero-yt-player';
-            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&loop=1&playlist=${ytId}&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3&disablekb=1&fs=0`;
-            iframe.setAttribute('frameborder', '0');
-            iframe.setAttribute('allow', 'autoplay; encrypted-media');
-            iframe.setAttribute('allowfullscreen', 'true');
+        const video = document.createElement('video');
+        video.id = 'hero-preview-video';
+        video.src = clipUrl;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = this.isMuted;
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+        video.setAttribute('muted', '');
+        video.setAttribute('disablepictureinpicture', '');
+        video.setAttribute('disableremoteplayback', '');
+        video.tabIndex = -1;
+        video.style.cssText = 'width: 100%; height: 100%; object-fit: cover; pointer-events: none; border: none; outline: none; display: block;';
 
-            iframe.onload = () => {
-                if (this.activeVideoReqId !== currentReqId) return;
-                videoLayer.classList.remove('hidden');
-                videoLayer.classList.add('active');
-                if (previewTag) previewTag.classList.remove('hidden');
-                if (backdropImg) backdropImg.style.opacity = '0';
+        video.onplaying = () => {
+            if (this.activeVideoReqId !== currentReqId) return;
+            videoLayer.classList.remove('hidden');
+            videoLayer.classList.add('active');
+            if (previewTag) previewTag.classList.remove('hidden');
+            if (backdropImg) backdropImg.style.opacity = '0';
+        };
 
-                if (!this.isMuted) {
-                    setTimeout(() => {
-                        try {
-                            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
-                        } catch (e) {}
-                    }, 400);
+        videoLayer.appendChild(video);
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                if (this.activeVideoReqId === currentReqId && backdropImg) {
+                    backdropImg.style.opacity = '0';
                 }
-            };
-
-            videoLayer.appendChild(iframe);
-        } else {
-            // HTML5 Cinematic fallback clip
-            const cinemataClips = [
-                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
-                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-            ];
-            const clipUrl = cinemataClips[Math.floor(Math.random() * cinemataClips.length)];
-
-            const video = document.createElement('video');
-            video.id = 'hero-preview-video';
-            video.src = clipUrl;
-            video.autoplay = true;
-            video.loop = true;
-            video.muted = this.isMuted;
-            video.playsInline = true;
-            video.setAttribute('playsinline', '');
-            video.setAttribute('webkit-playsinline', '');
-
-            video.onplaying = () => {
-                if (this.activeVideoReqId !== currentReqId) return;
-                videoLayer.classList.remove('hidden');
-                videoLayer.classList.add('active');
-                if (previewTag) previewTag.classList.remove('hidden');
-                if (backdropImg) backdropImg.style.opacity = '0';
-            };
-
-            videoLayer.appendChild(video);
-            video.play().catch(() => {});
+            }).catch(() => {
+                video.muted = true;
+                video.play().catch(() => {});
+            });
         }
     }
 
@@ -1606,14 +1545,6 @@ class NetflixApp {
             } else {
                 iconMuted?.classList.add('hidden');
                 iconUnmuted?.classList.remove('hidden');
-            }
-
-            const ytIframe = document.getElementById('hero-yt-player');
-            if (ytIframe && ytIframe.contentWindow) {
-                const func = this.isMuted ? 'mute' : 'unMute';
-                try {
-                    ytIframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), '*');
-                } catch (err) {}
             }
 
             const videoEl = document.getElementById('hero-preview-video');

@@ -69,21 +69,43 @@ function shuffleArray(array) {
 
 // MALAYSIA & NUSANTARA CINEMA BLOCKBUSTERS COLLECTION
 const MALAYSIA_CINEMA_COLLECTION = [
-    { id: 'tt11347146', title: 'Mat Kilau: Kebangkitan Pahlawan', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Action, Adventure, Drama', matchScore: 99, match: '99% Match', duration: '1h 58m', age: '13+', trailerKey: 'h1vfzjY5LXs', overview: 'Kisah kebangkitan pahlawan Melayu Mat Kilau bersama para sahabatnya menentang penjajahan British demi mempertahankan maruah bangsa dan agama di Tanah Melayu.' },
+    { id: 'tt11347146', moviedb_id: 988595, title: 'Mat Kilau: Kebangkitan Pahlawan', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Action, Adventure, Drama', matchScore: 99, match: '99% Match', duration: '1h 58m', age: '13+', trailerKey: 'h1vfzjY5LXs', overview: 'Kisah kebangkitan pahlawan Melayu Mat Kilau bersama para sahabatnya menentang penjajahan British demi mempertahankan maruah bangsa dan agama di Tanah Melayu.' },
+    { id: 'tt31908752', title: 'Sheriff: Narko Integriti', type: 'movie', year: '2024', country: 'Malaysia', genres: 'Action, Crime, Mystery', matchScore: 99, match: '99% Match', duration: '2h 12m', age: '18+', trailerKey: 'Y7vDskk7PqE', overview: 'Sheriffuddin, pegawai polis dari Jabatan Integriti dihantar untuk menyiasat kes Meth Killer di bawah Jabatan Narkotik yang diketuai oleh Nazri.' },
+    { id: 'tt30253785', title: 'Pendekar Awang: Darah Indera Gajah', type: 'movie', year: '2024', country: 'Malaysia', genres: 'Action, Adventure, Drama', matchScore: 98, match: '98% Match', duration: '1h 55m', age: '13+', trailerKey: 'NlE5d334KqY', overview: 'Pendekar Awang bersama para pejuang gagah berani mempertahankan laluan rahsia pahlawan Pahang daripada jerangkap maut tentera penjajah British.' },
     { id: 'tt5132854', title: 'Polis Evo', type: 'movie', year: '2015', country: 'Malaysia', genres: 'Action, Comedy, Crime', matchScore: 98, match: '98% Match', duration: '2h 00m', age: '16+', trailerKey: 'Gg4P2K_Ff4w', overview: 'Dua anggota polis yang berbeza perwatakan berganding bahu dalam misi berbahaya membanteras sindiket dadah terbesar di Terengganu.' },
     { id: 'tt8369678', title: 'Polis Evo 2', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Action, Crime, Thriller', matchScore: 97, match: '97% Match', duration: '2h 05m', age: '18+', overview: 'Inspektor Sani dan Khai berdepan dengan pengganas ekstremis yang menawan sebuah perkampungan pulau terpencil.' },
     { id: 'tt27771775', title: 'Polis Evo 3', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Comedy, Crime', matchScore: 98, match: '98% Match', duration: '2h 01m', age: '16+', overview: 'Inspektor Khai dan Sani kembali dalam operasi memburu pakar letupan dan musuh masa lampau yang mengancam keselamatan bandaraya.' },
     { id: 'tt9063106', title: 'PASKAL: The Movie', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Action, Drama, Thriller', matchScore: 99, match: '99% Match', duration: '1h 55m', age: '16+', trailerKey: 'qH62UvU8r5g', overview: 'Diinspirasikan daripada kisah benar unit elit Pasukan Khas Laut (PASKAL) Tentera Laut Diraja Malaysia dalam misi menyelamatkan kapal tangki MV Bunga Laurel daripada lanun Somalia.' },
     { id: 'tt22024396', title: 'MALBATT: Misi Bakara', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Drama, War', matchScore: 98, match: '98% Match', duration: '2h 10m', age: '16+', trailerKey: '8Y7fW2aC4j4', overview: 'Kisah wira sebenar Batalion Malaysia (MALBATT) yang menyelamatkan tentera elit US Rangers yang terperangkap di Pasar Bakara, Mogadishu pada tahun 1993.' },
+    { id: 'tt14571464', title: 'Air Force The Movie: Selagi Bernyawa', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Action, Drama, War', matchScore: 98, match: '98% Match', duration: '1h 43m', age: '13+', overview: 'Pasukan khas PASKAU terperangkap di zon perang Namburi dan skuadron TUDM melancarkan misi menyelamat yang penuh mendebarkan.' },
+    { id: 'tt11194492', title: 'Wira', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Action, Drama', matchScore: 97, match: '97% Match', duration: '1h 49m', age: '18+', overview: 'Bekas komando tentera pulang ke kampung halamannya untuk menyelamatkan adik dan keluarganya daripada cengkaman gengster kejam.' },
+    { id: 'tt27162200', title: 'The Experts', type: 'movie', year: '2024', country: 'Malaysia', genres: 'Action, Comedy, Crime', matchScore: 97, match: '97% Match', duration: '2h 02m', age: '13+', overview: 'Lima beradik pakar rompakan terpaksa bersatu kembali untuk satu misi rompakan berisiko tinggi demi melindungi keluarga mereka.' },
+    { id: 'tt1877531', title: 'KL Gangster', type: 'movie', year: '2011', country: 'Malaysia', genres: 'Action, Crime', matchScore: 98, match: '98% Match', duration: '1h 23m', age: '18+', overview: 'Malik dibebaskan dari penjara dan berhasrat meninggalkan dunia hitam, tetapi dicabar oleh Shark yang mahu menjadi raja kongsi gelap KL.' },
+    { id: 'tt2284988', title: 'KL Gangster 2', type: 'movie', year: '2013', country: 'Malaysia', genres: 'Action, Crime', matchScore: 97, match: '97% Match', duration: '1h 58m', age: '18+', overview: 'Prequel kepada KL Gangster yang menceritakan bagaimana Malik dan adiknya Jai terjebak dalam kancah dunia samseng Kuala Lumpur.' },
+    { id: 'tt1233261', title: 'Evolusi KL Drift', type: 'movie', year: '2008', country: 'Malaysia', genres: 'Action', matchScore: 96, match: '96% Match', duration: '1h 35m', age: '16+', overview: 'Persaingan perlumbaan drift jalanan antara Zack dan Sham yang dicemari pengaruh dadah dan permusuhan Feroz.' },
+    { id: 'tt4568478', title: 'Tombiruo: Penunggu Rimba', type: 'movie', year: '2017', country: 'Malaysia', genres: 'Action, Drama, Fantasy', matchScore: 97, match: '97% Match', duration: '1h 55m', age: '16+', overview: 'Ejim, seorang lelaki bertopeng yang digelar penunggu rimba, bangkit menuntut bela atas kematian bapanya di hutan belantara Sabah.' },
     { id: 'tt5584514', title: 'Munafik', type: 'movie', year: '2016', country: 'Malaysia', genres: 'Horror, Mystery, Thriller', matchScore: 97, match: '97% Match', duration: '1h 44m', age: '18+', overview: 'Ustaz Adam, seorang pengamal perubatan Islam, bergelut dengan trauma kematian isterinya semasa merawat seorang wanita yang dirasuk entiti iblis jahat.' },
     { id: 'tt8266228', title: 'Munafik 2', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Horror, Mystery, Thriller', matchScore: 98, match: '98% Match', duration: '1h 50m', age: '18+', overview: 'Ustaz Adam berdepan dengan lelaki misteri bernama Abuja yang mengajar fahaman sesat dan mengamalkan ilmu hitam di sebuah kampung terpencil.' },
+    { id: 'tt1830950', title: 'Khurafat: Perjanjian Syaitan', type: 'movie', year: '2011', country: 'Malaysia', genres: 'Horror, Mystery', matchScore: 97, match: '97% Match', duration: '1h 24m', age: '18+', overview: 'Kisah perjanjian syaitan dan ilmu sihir yang memporak-perandakan kehidupan Johan dan isterinya Aishah.' },
+    { id: 'tt1013745', title: 'Jangan Pandang Belakang', type: 'movie', year: '2007', country: 'Malaysia', genres: 'Horror, Mystery', matchScore: 97, match: '97% Match', duration: '1h 45m', age: '18+', overview: 'Dharma menyiasat punca misteri kematian tunangnya Rose dan menemui sebuah botol saka berpenunggu di rumah usang.' },
+    { id: 'tt1920831', title: 'Karak', type: 'movie', year: '2011', country: 'Malaysia', genres: 'Horror, Thriller', matchScore: 96, match: '96% Match', duration: '1h 30m', age: '18+', overview: 'Empat sekawan yang terperangkap dalam kesesakan lebuh raya Karak membuat keputusan menggunakan jalan lama yang penuh misteri seram.' },
+    { id: 'tt9777598', title: 'Misteri Dilaila', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Mystery, Thriller', matchScore: 96, match: '96% Match', duration: '1h 22m', age: '16+', overview: 'Jefri dan Dilaila bercuti di Bukit Fraser, namun Dilaila hilang secara misteri sebelum seorang wanita lain muncul mendakwa dirinya Dilaila.' },
     { id: 'tt8828062', title: 'Hantu Kak Limah', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Comedy, Horror', matchScore: 97, match: '97% Match', duration: '1h 50m', age: '13+', overview: 'Kekecohan melanda Kampung Pisang apabila roh Kak Limah mula menghantui penduduk kampung selepas kematiannya yang penuh misteri.' },
+    { id: 'tt1797451', title: 'Hantu Kak Limah Balik Rumah', type: 'movie', year: '2010', country: 'Malaysia', genres: 'Comedy, Horror', matchScore: 97, match: '97% Match', duration: '1h 47m', age: '13+', overview: 'Husin pulang ke Kampung Pisang dan mendapati penduduk kampung panik dengan khabar angin Kak Limah telah menjadi hantu.' },
     { id: 'tt27445004', title: 'Abang Adik', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Drama, Crime', matchScore: 99, match: '99% Match', duration: '1h 55m', age: '16+', overview: 'Dua orang anak yatim tanpa kewarganegaraan berjuang meneruskan kehidupan di lorong-lorong gelap Pudu, Kuala Lumpur, mengikat kasih sayang persaudaraan yang luar biasa.' },
+    { id: 'tt5423310', title: 'Ola Bola', type: 'movie', year: '2016', country: 'Malaysia', genres: 'Drama, Sport', matchScore: 98, match: '98% Match', duration: '2h 21m', age: 'All', overview: 'Kisah benar inspirasi pasukan bola sepak kebangsaan Malaysia yang berjuang menyatukan perbezaan kaum demi melayakkan diri ke Sukan Olimpik Moscow 1980.' },
+    { id: 'tt3144678', title: 'The Journey', type: 'movie', year: '2014', country: 'Malaysia', genres: 'Comedy, Drama', matchScore: 98, match: '98% Match', duration: '1h 44m', age: 'All', overview: 'Seorang bapa tradisional Cina mengembara bersama bakal menantu Mat Salleh ke seluruh Malaysia untuk menghantar kad jemputan kahwin.' },
+    { id: 'tt1508322', title: 'Papadom', type: 'movie', year: '2009', country: 'Malaysia', genres: 'Comedy, Drama, Family', matchScore: 97, match: '97% Match', duration: '1h 50m', age: 'All', overview: 'Seorang bapa pengusaha nasi kandar yang terlalu melindungi anak perempuannya sanggup bekerja di kantin universiti untuk mengawasinya.' },
     { id: 'tt11388746', title: 'Ejen Ali: The Movie', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Animation, Action, Sci-Fi', matchScore: 99, match: '99% Match', duration: '1h 37m', age: 'All', overview: 'Ali menghadapi dilema apabila M.A.T.A. mula menggunakan teknologi baharu NIKI, mencabar kesetiaannya sebagai ejen rahsia Cyberaya.' },
     { id: 'tt10419266', title: 'BoBoiBoy Movie 2', type: 'movie', year: '2019', country: 'Malaysia', genres: 'Animation, Action, Adventure', matchScore: 98, match: '98% Match', duration: '1h 57m', age: 'All', overview: 'BoBoiBoy dan rakan-rakannya berhadapan dengan musuh purba bernama Retak\'ka yang mahu merampas semula kuasa elemental purba.' },
     { id: 'tt24225212', title: 'Mechamato Movie', type: 'movie', year: '2022', country: 'Malaysia', genres: 'Animation, Action, Sci-Fi', matchScore: 98, match: '98% Match', duration: '2h 02m', age: 'All', overview: 'Amato secara tidak sengaja bertemu dengan MechaBot, robot berkuasa yang mampu menukar objek harian menjadi alat canggih berteknologi tinggi.' },
+    { id: 'tt1483348', title: 'Cicak-Man', type: 'movie', year: '2006', country: 'Malaysia', genres: 'Action, Comedy, Sci-Fi', matchScore: 96, match: '96% Match', duration: '1h 42m', age: 'All', overview: 'Hairi secara tidak sengaja tertelan cicak yang dicemari virus saintifik dan bertukar menjadi adiwira pembela Kota Metrofulus.' },
+    { id: 'tt0486790', title: 'Gol & Gincu', type: 'movie', year: '2005', country: 'Malaysia', genres: 'Comedy, Drama, Romance', matchScore: 96, match: '96% Match', duration: '1h 41m', age: '13+', overview: 'Putri menubuhkan pasukan futsal wanita bersama rakan-rakannya semata-mata untuk memikat kembali bekas teman lelakinya.' },
+    { id: 'tt2180470', title: 'Songlap', type: 'movie', year: '2011', country: 'Malaysia', genres: 'Action, Crime, Drama', matchScore: 97, match: '97% Match', duration: '1h 38m', age: '18+', overview: 'Dua adik-beradik Am dan Ad terjebak dalam sindiket pemerdagangan bayi haram di lorong-lorong kelam kota raya.' },
+    { id: 'tt5797374', title: 'Pekak', type: 'movie', year: '2016', country: 'Malaysia', genres: 'Drama, Romance', matchScore: 96, match: '96% Match', duration: '1h 38m', age: '18+', overview: 'Uda, seorang pengedar dadah pekak, jatuh cinta pada Dara, seorang pelajar sekolah liar, dan berhasrat menjalani pembedahan koklea untuk mendengar suaranya.' },
     { id: 'tt0862930', title: 'Dukun', type: 'movie', year: '2018', country: 'Malaysia', genres: 'Crime, Horror, Mystery', matchScore: 96, match: '96% Match', duration: '1h 48m', age: '18+', overview: 'Penyiasatan pembunuhan ahli politik membawa peguam Karim bersemuka dengan Diana Dahlan, seorang dukun wanita misteri yang mengamalkan ilmu hitam berdarah.' },
-    { id: 'tt24581070', title: 'Coast Guard Malaysia: Ops Helang', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Thriller', matchScore: 96, match: '96% Match', duration: '2h 10m', age: '16+', overview: 'Pegawai Pasukan Khas Maritim berjuang menyelamatkan keluarga dan tetamu majlis perkahwinannya yang ditawan pengganas laut.' }
+    { id: 'tt24581070', title: 'Coast Guard Malaysia: Ops Helang', type: 'movie', year: '2023', country: 'Malaysia', genres: 'Action, Thriller', matchScore: 96, match: '96% Match', duration: '2h 10m', age: '16+', overview: 'Pegawai Pasukan Khas Maritim berjuang menyelamatkan keluarga dan tetamu majlis perkahwinannya yang ditawan pengganas laut.' },
+    { id: 'tt30934279', title: 'Rain Town', type: 'movie', year: '2024', country: 'Malaysia', genres: 'Drama, Family', matchScore: 96, match: '96% Match', duration: '1h 56m', age: 'All', overview: 'Kisah sebuah keluarga berbilang budaya di Taiping yang berdepan ujian kekeluargaan dan impian hidup yang bertembung.' }
 ];
 
 // K-DRAMA & KOREAN CINEMA COLLECTION
@@ -1162,7 +1184,7 @@ class NetflixApp {
     }
 
     renderAllSkeletons() {
-        const rails = ['latest-rail', 'top10-rail', 'trending-rail', 'tvseries-rail', 'action-rail', 'scifi-rail', 'horror-rail', 'drama-rail'];
+        const rails = ['latest-rail', 'top10-rail', 'malaysia-rail', 'trending-rail', 'tvseries-rail', 'action-rail', 'scifi-rail', 'horror-rail', 'drama-rail'];
         rails.forEach(id => {
             const container = document.getElementById(id);
             if (container) {
@@ -1755,12 +1777,52 @@ class NetflixApp {
                 this.displayedCount = 30;
                 this.applyFilterAndSort();
 
-                // Live dynamic fetch for genre from Cinemeta API if not already fetched!
-                if (this.currentGenre !== 'all') {
+                // Live dynamic fetch for Malaysia titles from Cinemeta API if Malaysia selected
+                if (this.currentCountry === 'Malaysia') {
+                    this.fetchMalaysiaCatalog();
+                } else if (this.currentGenre !== 'all') {
                     this.fetchGenreCatalog(this.currentGenre);
                 }
             };
         });
+    }
+
+    async fetchMalaysiaCatalog() {
+        if (this.fetchedMalaysia) return;
+        this.fetchedMalaysia = true;
+
+        try {
+            const queries = ['Malaysia', 'Malay', 'Melayu'];
+            const promises = queries.map(q => 
+                fetch(`https://v3-cinemeta.strem.io/catalog/movie/top/search=${encodeURIComponent(q)}.json`)
+                    .then(r => r.json())
+                    .then(d => (d && Array.isArray(d.metas)) ? d.metas : [])
+                    .catch(() => [])
+            );
+
+            const allResults = await Promise.all(promises);
+            const flatMetas = allResults.flat();
+
+            if (flatMetas.length > 0) {
+                const formatted = flatMetas.map(m => {
+                    const item = formatCinemetaItem(m, 'movie');
+                    item.country = 'Malaysia';
+                    return item;
+                });
+                this.malaysiaMovies = this.deduplicateTitles([...this.malaysiaMovies, ...formatted]);
+                this.allTitles = this.deduplicateTitles([...this.allTitles, ...formatted]);
+
+                if (this.currentCountry === 'Malaysia') {
+                    this.applyFilterAndSort();
+                }
+                const myRail = document.getElementById('malaysia-rail');
+                if (myRail) {
+                    this.renderStandardRail(this.malaysiaMovies, myRail);
+                }
+            }
+        } catch (e) {
+            console.warn('Error fetching live Malaysia catalog:', e);
+        }
     }
 
     async fetchGenreCatalog(genre) {

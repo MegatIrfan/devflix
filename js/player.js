@@ -13,6 +13,8 @@ class NetflixPlayer {
         this.lastKnownTime = 0;
         this.activeSubtitle = null; // { url, label, lang }
         this.availableSubtitles = [];
+        this.parsedCues = []; // In-player subtitle cues
+        this.subtitleInterval = null;
 
         this.init();
     }
@@ -50,14 +52,30 @@ class NetflixPlayer {
 
                 // Handle diverse embed player time messages (Vidlink, VidSrc, JWPlayer, etc.)
                 const time = data.currentTime || data.time || data.progress || (data.data && data.data.currentTime);
-                if (typeof time === 'number' && time > 2) {
+                if (typeof time === 'number' && time > 0) {
                     this.lastKnownTime = Math.floor(time);
-                    if (this.currentMedia && this.currentMedia.id) {
+                    if (this.currentMedia && this.currentMedia.id && this.lastKnownTime > 2) {
                         this.savePlaybackProgress(this.currentMedia.id, this.lastKnownTime);
                     }
+                    this.updateSubtitleOverlay(time);
                 }
             } catch (err) {}
         });
+    }
+
+    updateSubtitleOverlay(currentTime) {
+        if (!this.parsedCues || this.parsedCues.length === 0) return;
+        const overlay = document.getElementById('player-subtitle-overlay');
+        const textElem = document.getElementById('player-subtitle-text');
+        if (!overlay || !textElem) return;
+
+        const currentCue = this.parsedCues.find(c => currentTime >= c.start && currentTime <= c.end);
+        if (currentCue) {
+            textElem.innerHTML = currentCue.text;
+            overlay.classList.remove('hidden');
+        } else {
+            overlay.classList.add('hidden');
+        }
     }
 
     savePlaybackProgress(id, seconds) {
@@ -543,7 +561,7 @@ class NetflixPlayer {
         });
     }
 
-    applyCustomSubtitle(sub, langTitle) {
+    async applyCustomSubtitle(sub, langTitle) {
         this.activeSubtitle = {
             url: sub.url,
             label: langTitle,
@@ -562,8 +580,56 @@ class NetflixPlayer {
         const modal = document.getElementById('player-subtitle-modal');
         if (modal) modal.classList.add('hidden');
 
+        // Fetch and parse subtitle cues for client-side overlay engine
+        try {
+            const resp = await fetch(sub.url);
+            if (resp.ok) {
+                const srtContent = await resp.text();
+                this.parsedCues = this.parseSRT(srtContent);
+            }
+        } catch(e) {
+            console.warn('Could not load SRT for live overlay:', e);
+        }
+
         // Reload iframe with the subtitle applied
         this.loadIframe();
+    }
+
+    parseSRT(data) {
+        const cues = [];
+        if (!data) return cues;
+        const normalized = data.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const blocks = normalized.split('\n\n');
+
+        const parseTime = (timeStr) => {
+            if (!timeStr) return 0;
+            const parts = timeStr.trim().split(':');
+            if (parts.length < 3) return 0;
+            const hrs = parseFloat(parts[0]) || 0;
+            const mins = parseFloat(parts[1]) || 0;
+            const secParts = parts[2].split(/[,.]/);
+            const secs = parseFloat(secParts[0]) || 0;
+            const millis = parseFloat(secParts[1] || 0) / 1000;
+            return (hrs * 3600) + (mins * 60) + secs + millis;
+        };
+
+        for (const block of blocks) {
+            const lines = block.trim().split('\n');
+            if (lines.length >= 2) {
+                const timeLineIndex = lines[0].includes('-->') ? 0 : 1;
+                const timeLine = lines[timeLineIndex];
+                if (timeLine && timeLine.includes('-->')) {
+                    const [startStr, endStr] = timeLine.split('-->');
+                    const textLines = lines.slice(timeLineIndex + 1).join('<br>');
+                    cues.push({
+                        start: parseTime(startStr),
+                        end: parseTime(endStr),
+                        text: textLines
+                    });
+                }
+            }
+        }
+        return cues;
     }
 
     close() {

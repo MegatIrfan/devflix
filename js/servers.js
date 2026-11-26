@@ -17,8 +17,26 @@
 
 const STREAM_SERVERS = [
     {
+        id: 'vidlink-jw',
+        name: 'Server 1 (VidLink Pro - Auto Subtitles & Audio)',
+        badge: 'Best Subtitles / Zero Buffering',
+        supportsTv: true,
+        getMovieUrl: (imdbId, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidlink.pro/movie/${imdbId}?player=jw&primaryColor=e50914&autoplay=true`;
+            if (startAt > 5) url += `&startAt=${startAt}`;
+            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        },
+        getTvUrl: (imdbId, season, episode, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidlink.pro/tv/${imdbId}/${season}/${episode}?player=jw&primaryColor=e50914&autoplay=true`;
+            if (startAt > 5) url += `&startAt=${startAt}`;
+            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        }
+    },
+    {
         id: 'vidsrc-su',
-        name: 'Server 1 (VidSrc SU - 1080p No Popups)',
+        name: 'Server 2 (VidSrc SU - 1080p Ultra)',
         badge: 'Zero Ads / 1080p',
         supportsTv: true,
         getMovieUrl: (imdbId, startAt = 0, subUrl = '', subLabel = 'Malay') => {
@@ -34,7 +52,7 @@ const STREAM_SERVERS = [
     },
     {
         id: 'multiembed',
-        name: 'Server 2 (MultiEmbed - Clean Stream)',
+        name: 'Server 3 (MultiEmbed - Clean Stream)',
         badge: 'No Popups',
         supportsTv: true,
         getMovieUrl: (imdbId) => `https://multiembed.mov/?video_id=${imdbId}`,
@@ -42,29 +60,11 @@ const STREAM_SERVERS = [
     },
     {
         id: '2embed',
-        name: 'Server 3 (2Embed Ultra - TV Series Ready)',
+        name: 'Server 4 (2Embed Ultra - TV Series Ready)',
         badge: 'High Reliability',
         supportsTv: true,
         getMovieUrl: (imdbId) => `https://2embed.skin/embed/${imdbId}`,
         getTvUrl: (imdbId, season, episode) => `https://2embed.skin/embedtv/${imdbId}&s=${season}&e=${episode}`
-    },
-    {
-        id: 'vidlink-jw',
-        name: 'Server 4 (VidLink Pro - JWPlayer Multi-Sub)',
-        badge: 'Best Subtitles & Audio',
-        supportsTv: true,
-        getMovieUrl: (imdbId, startAt = 0, subUrl = '', subLabel = 'Malay') => {
-            let url = `https://vidlink.pro/movie/${imdbId}?player=jw&primaryColor=e50914`;
-            if (startAt > 5) url += `&startAt=${startAt}`;
-            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
-            return url;
-        },
-        getTvUrl: (imdbId, season, episode, startAt = 0, subUrl = '', subLabel = 'Malay') => {
-            let url = `https://vidlink.pro/tv/${imdbId}/${season}/${episode}?player=jw&primaryColor=e50914`;
-            if (startAt > 5) url += `&startAt=${startAt}`;
-            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
-            return url;
-        }
     },
     {
         id: 'vidsrc-to',

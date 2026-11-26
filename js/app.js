@@ -1100,6 +1100,7 @@ class NetflixApp {
         this.setupMobileNavigation();
         this.setupSearch();
         this.setupInfoModal();
+        this.setupTrailerModal();
         this.renderContinueWatching();
         this.setupRailArrows();
         this.setupLoadMore();
@@ -2209,6 +2210,15 @@ class NetflixApp {
             };
         }
 
+        // Watch Trailer Button
+        const trailerBtn = document.getElementById('dialog-trailer-btn');
+        if (trailerBtn) {
+            trailerBtn.onclick = (e) => {
+                if (e) e.stopPropagation();
+                this.openTrailerModal(media);
+            };
+        }
+
         // Show modal immediately
         modal.classList.remove('hidden');
         const dialog = modal.querySelector('.vision-modal-glass, .netflix-dialog');
@@ -2222,22 +2232,123 @@ class NetflixApp {
         }
     }
 
+    async openTrailerModal(media) {
+        if (!media) return;
+        const modal = document.getElementById('trailer-modal');
+        const iframe = document.getElementById('trailer-iframe');
+        const titleEl = document.getElementById('trailer-title-display');
+        if (!modal || !iframe) return;
+
+        if (titleEl) titleEl.textContent = `${media.title || 'Movie'} (Official Trailer)`;
+        modal.classList.remove('hidden');
+
+        // Reset iframe source first
+        iframe.src = '';
+
+        // Query Cinemeta meta endpoint for authentic official YouTube trailer ID
+        let ytId = null;
+        try {
+            const mediaType = media.type || 'movie';
+            const metaRes = await fetch(`https://v3-cinemeta.strem.io/meta/${mediaType}/${media.id}.json`);
+            if (metaRes.ok) {
+                const metaData = await metaRes.json();
+                const meta = metaData && metaData.meta;
+                if (meta) {
+                    if (meta.trailerStreams && meta.trailerStreams.length > 0 && meta.trailerStreams[0].ytId) {
+                        ytId = meta.trailerStreams[0].ytId;
+                    } else if (meta.trailers && meta.trailers.length > 0 && meta.trailers[0].source) {
+                        ytId = meta.trailers[0].source;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Trailer extraction error:', e);
+        }
+
+        if (ytId) {
+            iframe.src = `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+        } else {
+            // High reliability YouTube search embed fallback
+            const searchQuery = encodeURIComponent(`${media.title} ${media.year || ''} official trailer`);
+            iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${searchQuery}&autoplay=1`;
+        }
+    }
+
+    closeTrailerModal() {
+        const modal = document.getElementById('trailer-modal');
+        const iframe = document.getElementById('trailer-iframe');
+        if (modal) modal.classList.add('hidden');
+        if (iframe) iframe.src = ''; // Immediately stop video and sound
+    }
+
+    setupTrailerModal() {
+        const closeBtn = document.getElementById('trailer-close-btn');
+        const modal = document.getElementById('trailer-modal');
+        if (closeBtn) {
+            closeBtn.onclick = () => this.closeTrailerModal();
+        }
+        if (modal) {
+            modal.onclick = (e) => {
+                if (e.target === modal) this.closeTrailerModal();
+            };
+        }
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+                this.closeTrailerModal();
+            }
+        });
+    }
+
     renderRecommendedInModal(media) {
         const grid = document.getElementById('dialog-recommended-grid');
         if (!grid) return;
         grid.innerHTML = '';
 
-        const mediaGenres = (media.genres || '').toLowerCase().split(',').map(g => g.trim());
+        // Extract clean genre keywords
+        const targetGenres = (media.genres || '')
+            .toLowerCase()
+            .split(/[,•/]/)
+            .map(g => g.trim())
+            .filter(Boolean);
+        const targetType = media.type || 'movie';
 
-        const recommended = (this.allTitles || []).filter(item => {
-            if (!item || !item.id || item.id === media.id) return false;
-            const itemGenres = (item.genres || '').toLowerCase();
-            return mediaGenres.some(g => g && itemGenres.includes(g));
-        }).slice(0, 6);
+        // Score all candidates by exact genre overlap, type match, and rating
+        const scoredCandidates = (this.allTitles || [])
+            .filter(item => item && item.id && item.id !== media.id)
+            .map(item => {
+                const itemGenres = (item.genres || '').toLowerCase();
+                let matchScore = 0;
+                
+                targetGenres.forEach(g => {
+                    if (g && itemGenres.includes(g)) {
+                        matchScore += 3; // strong genre match
+                    }
+                });
 
-        const finalRecs = recommended.length >= 3 
-            ? recommended 
-            : (this.allTitles || []).filter(i => i && i.id && i.id !== media.id).slice(0, 6);
+                // Match type bonus (movie with movie, series with series)
+                if (item.type === targetType) {
+                    matchScore += 2;
+                }
+
+                // Add slight dynamic jitter (0 - 1.2) so recommendations feel fresh & varied
+                const jitter = Math.random() * 1.2;
+                return { item, totalScore: matchScore + jitter };
+            })
+            .filter(c => c.totalScore >= 2) // Must match at least 1 genre or type
+            .sort((a, b) => b.totalScore - a.totalScore)
+            .map(c => c.item);
+
+        // Pick top 6 highest-match candidates
+        let finalRecs = scoredCandidates.slice(0, 6);
+
+        // If fewer than 6, backfill from remaining library with shuffle
+        if (finalRecs.length < 6) {
+            const usedIds = new Set([media.id, ...finalRecs.map(r => r.id)]);
+            const remaining = shuffleArray(
+                (this.allTitles || []).filter(i => i && i.id && !usedIds.has(i.id))
+            );
+            finalRecs = [...finalRecs, ...remaining].slice(0, 6);
+        }
 
         finalRecs.forEach(item => {
             const card = document.createElement('div');
@@ -2258,7 +2369,7 @@ class NetflixApp {
                 <div class="rec-body">
                     <h5 class="rec-title">${item.title || 'Untitled'}</h5>
                     <div class="rec-meta">
-                        <span class="match-score">${item.match || '96% Match'}</span>
+                        <span class="match-score">${item.match || `${item.matchScore || 96}% Match`}</span>
                         <span class="age-badge">${item.age || '16+'}</span>
                         <span style="color:#a3a3a3">${item.year || ''}</span>
                     </div>

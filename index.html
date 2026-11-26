@@ -460,6 +460,10 @@
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                         <span>Play Now</span>
                     </button>
+                    <button class="hero-btn-trailer" id="dialog-trailer-btn">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/><circle cx="12" cy="12" r="10"/></svg>
+                        <span>Trailer</span>
+                    </button>
                     <button class="hero-btn-info" id="dialog-watchlist-btn">
                         <span id="dialog-watchlist-text">+ My List</span>
                     </button>
@@ -494,6 +498,27 @@
                 <div class="dialog-recommended-grid" id="dialog-recommended-grid">
                     <!-- Recommended cards populated dynamically -->
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEVFLIX YOUTUBE TRAILER MODAL -->
+    <div class="netflix-modal-backdrop hidden" id="trailer-modal" style="z-index: 35000;">
+        <div class="trailer-modal-glass">
+            <div class="trailer-header">
+                <div class="trailer-title-info">
+                    <span class="live-preview-tag" style="background:var(--netflix-red);font-size:0.68rem;letter-spacing:1px;">OFFICIAL TRAILER</span>
+                    <h3 id="trailer-title-display">Movie Title</h3>
+                </div>
+                <button class="dialog-close-btn" id="trailer-close-btn" title="Close Trailer">&times;</button>
+            </div>
+            <div class="trailer-video-frame">
+                <iframe id="trailer-iframe"
+                        src="" 
+                        title="YouTube Trailer" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
             </div>
         </div>
     </div>

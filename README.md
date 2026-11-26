@@ -2,6 +2,7 @@
 
 A sleek, responsive, and modern TV & Movie web application that allows you to browse, search, and stream **any movie or TV show using its IMDb ID** (e.g. `tt1375666`, `tt0816692`, `tt0944947`).
 
+
 ---
 
 ## ✨ Features

@@ -18,83 +18,115 @@
 const STREAM_SERVERS = [
     {
         id: 'vidlink-jw',
-        name: 'Server 1 (VidLink Pro - Auto Multi-Sub)',
-        badge: 'Auto Subtitles & 4K',
+        name: 'Server 1 (VidLink Pro - Multi-Sub & TMDB Auto-Match)',
+        badge: 'Best Subtitles & Regional Asian',
         supportsTv: true,
-        getMovieUrl: (imdbId, startAt = 0) => {
-            let url = `https://vidlink.pro/movie/${imdbId}?player=jw&primaryColor=e50914&autoplay=true`;
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            let url = `https://vidlink.pro/movie/${playId}?player=jw&primaryColor=e50914&autoplay=true`;
             if (startAt > 5) url += `&startAt=${startAt}`;
             return url;
         },
-        getTvUrl: (imdbId, season, episode, startAt = 0) => {
-            let url = `https://vidlink.pro/tv/${imdbId}/${season}/${episode}?player=jw&primaryColor=e50914&autoplay=true`;
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            let url = `https://vidlink.pro/tv/${playId}/${season}/${episode}?player=jw&primaryColor=e50914&autoplay=true`;
             if (startAt > 5) url += `&startAt=${startAt}`;
             return url;
         }
     },
     {
-        id: 'vidsrc-su',
-        name: 'Server 2 (VidSrc SU - 1080p Ultra)',
-        badge: 'Zero Ads / 1080p',
-        supportsTv: true,
-        getMovieUrl: (imdbId) => `https://vidsrc.su/embed/movie/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://vidsrc.su/embed/tv/${imdbId}/${season}/${episode}`
-    },
-    {
         id: 'multiembed',
-        name: 'Server 3 (MultiEmbed - Clean Stream)',
-        badge: 'Fast & Reliable',
+        name: 'Server 2 (MultiEmbed - High Asian Compatibility)',
+        badge: 'TMDB & Regional Streaming',
         supportsTv: true,
-        getMovieUrl: (imdbId) => `https://multiembed.mov/?video_id=${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://multiembed.mov/?video_id=${imdbId}&s=${season}&e=${episode}`
-    },
-    {
-        id: '2embed',
-        name: 'Server 4 (2Embed Ultra - TV Series Ready)',
-        badge: 'High Reliability',
-        supportsTv: true,
-        getMovieUrl: (imdbId) => `https://2embed.skin/embed/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://2embed.skin/embedtv/${imdbId}&s=${season}&e=${episode}`
-    },
-    {
-        id: 'vidsrc-to',
-        name: 'Server 5 (VidSrc Pro - Backup Source)',
-        badge: 'Alternative Backup',
-        supportsTv: true,
-        getMovieUrl: (imdbId) => `https://vidsrc.to/embed/movie/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://vidsrc.to/embed/tv/${imdbId}/${season}/${episode}`
-    },
-    {
-        id: 'vidsrc-cc',
-        name: 'Server 6 (VidSrc CC)',
-        badge: 'Auto Subtitles',
-        supportsTv: true,
-        getMovieUrl: (imdbId) => `https://vidsrc.cc/v2/embed/movie/${imdbId}?autoPlay=true`,
-        getTvUrl: (imdbId, season, episode) => `https://vidsrc.cc/v2/embed/tv/${imdbId}/${season}/${episode}?autoPlay=true`
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            if (tmdbId) return `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1`;
+            return `https://multiembed.mov/?video_id=${id}`;
+        },
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            if (tmdbId) return `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`;
+            return `https://multiembed.mov/?video_id=${id}&s=${season}&e=${episode}`;
+        }
     },
     {
         id: 'embedsu',
-        name: 'Server 7 (EmbedSU)',
-        badge: 'Clean & Fast',
+        name: 'Server 3 (EmbedSU - Fast Cloud)',
+        badge: 'Zero Ads / TMDB Ready',
         supportsTv: true,
-        getMovieUrl: (imdbId) => `https://embed.su/embed/movie/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://embed.su/embed/tv/${imdbId}/${season}/${episode}`
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://embed.su/embed/movie/${playId}`;
+        },
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://embed.su/embed/tv/${playId}/${season}/${episode}`;
+        }
+    },
+    {
+        id: 'vidsrc-su',
+        name: 'Server 4 (VidSrc SU - 1080p Ultra)',
+        badge: 'Zero Ads / 1080p',
+        supportsTv: true,
+        getMovieUrl: (id) => `https://vidsrc.su/embed/movie/${id}`,
+        getTvUrl: (id, season, episode) => `https://vidsrc.su/embed/tv/${id}/${season}/${episode}`
+    },
+    {
+        id: '2embed',
+        name: 'Server 5 (2Embed Ultra - TV Series Ready)',
+        badge: 'High Reliability',
+        supportsTv: true,
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://2embed.skin/embed/${playId}`;
+        },
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://2embed.skin/embedtv/${playId}&s=${season}&e=${episode}`;
+        }
+    },
+    {
+        id: 'vidsrc-cc',
+        name: 'Server 6 (VidSrc CC - Auto Subtitles)',
+        badge: 'Auto Subtitles',
+        supportsTv: true,
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://vidsrc.cc/v2/embed/movie/${playId}?autoPlay=true`;
+        },
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://vidsrc.cc/v2/embed/tv/${playId}/${season}/${episode}?autoPlay=true`;
+        }
+    },
+    {
+        id: 'vidsrc-to',
+        name: 'Server 7 (VidSrc Pro - Backup Source)',
+        badge: 'Alternative Backup',
+        supportsTv: true,
+        getMovieUrl: (id) => `https://vidsrc.to/embed/movie/${id}`,
+        getTvUrl: (id, season, episode) => `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`
     },
     {
         id: 'smashystream',
         name: 'Server 8 (SmashyStream)',
         badge: 'High Speed',
         supportsTv: true,
-        getMovieUrl: (imdbId) => `https://player.smashy.stream/movie/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://player.smashy.stream/tv/${imdbId}?s=${season}&e=${episode}`
+        getMovieUrl: (id, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://player.smashy.stream/movie/${playId}`;
+        },
+        getTvUrl: (id, season, episode, startAt = 0, tmdbId = null) => {
+            const playId = tmdbId || id;
+            return `https://player.smashy.stream/tv/${playId}?s=${season}&e=${episode}`;
+        }
     },
     {
         id: 'vidsrc-in',
         name: 'Server 9 (VidSrc In)',
         badge: 'Alternative',
         supportsTv: true,
-        getMovieUrl: (imdbId) => `https://vidsrc.in/embed/movie?imdb=${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://vidsrc.in/embed/tv?imdb=${imdbId}&season=${season}&episode=${episode}`
+        getMovieUrl: (id) => `https://vidsrc.in/embed/movie?imdb=${id}`,
+        getTvUrl: (id, season, episode) => `https://vidsrc.in/embed/tv?imdb=${id}&season=${season}&episode=${episode}`
     }
 ];
 

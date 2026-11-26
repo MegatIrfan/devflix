@@ -209,6 +209,7 @@ class NetflixPlayer {
         if (!media) return;
         this.currentMedia = {
             id: media.id,
+            tmdbId: media.moviedb_id || media.tmdbId || null,
             type: media.type === 'series' || media.type === 'tv' ? 'series' : 'movie',
             title: media.title,
             poster: media.poster,
@@ -237,6 +238,9 @@ class NetflixPlayer {
             }
         }
 
+        // Auto resolve TMDB ID from Cinemeta if missing (crucial for Asian & Malaysian movies)
+        this.resolveTmdbIdIfNeeded();
+
         this.loadIframe();
 
         if (this.playerView) {
@@ -245,6 +249,24 @@ class NetflixPlayer {
         }
 
         this.saveToHistory();
+    }
+
+    async resolveTmdbIdIfNeeded() {
+        if (!this.currentMedia || this.currentMedia.tmdbId || !this.currentMedia.id) return;
+        const type = this.currentMedia.type === 'series' ? 'series' : 'movie';
+        try {
+            const res = await fetch(`https://v3-cinemeta.strem.io/meta/${type}/${encodeURIComponent(this.currentMedia.id)}.json`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.meta && (data.meta.moviedb_id || data.meta.tmdbId)) {
+                    this.currentMedia.tmdbId = data.meta.moviedb_id || data.meta.tmdbId;
+                    // Reload iframe once TMDB ID is discovered to unlock Asian & local regional streams
+                    this.loadIframe();
+                }
+            }
+        } catch (e) {
+            console.warn('TMDB resolution notice:', e);
+        }
     }
 
     async setupTvControls() {
@@ -349,11 +371,12 @@ class NetflixPlayer {
         let streamUrl = '';
 
         const startAt = this.lastKnownTime > 5 ? this.lastKnownTime : (this.getPlaybackProgress(this.currentMedia.id) || 0);
+        const tmdbId = this.currentMedia.tmdbId || null;
 
         if (this.currentMedia.type === 'series') {
-            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt);
+            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt, tmdbId);
         } else {
-            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt);
+            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt, tmdbId);
         }
 
         // Completely remove any sandbox attribute so video embeds never throw "sandboxed frame" error

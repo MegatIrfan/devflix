@@ -21,8 +21,16 @@ const STREAM_SERVERS = [
         name: 'Server 1 (VidSrc SU - 1080p No Popups)',
         badge: 'Zero Ads / 1080p',
         supportsTv: true,
-        getMovieUrl: (imdbId) => `https://vidsrc.su/embed/movie/${imdbId}`,
-        getTvUrl: (imdbId, season, episode) => `https://vidsrc.su/embed/tv/${imdbId}/${season}/${episode}`
+        getMovieUrl: (imdbId, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidsrc.su/embed/movie/${imdbId}`;
+            if (subUrl) url += `?sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        },
+        getTvUrl: (imdbId, season, episode, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidsrc.su/embed/tv/${imdbId}/${season}/${episode}`;
+            if (subUrl) url += `?sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        }
     },
     {
         id: 'multiembed',
@@ -42,11 +50,21 @@ const STREAM_SERVERS = [
     },
     {
         id: 'vidlink-jw',
-        name: 'Server 4 (VidLink Pro - JWPlayer)',
-        badge: 'Seamless Subs',
+        name: 'Server 4 (VidLink Pro - JWPlayer Multi-Sub)',
+        badge: 'Best Subtitles & Audio',
         supportsTv: true,
-        getMovieUrl: (imdbId, startAt = 0) => `https://vidlink.pro/movie/${imdbId}?player=jw&primaryColor=e50914${startAt > 5 ? `&startAt=${startAt}` : ''}`,
-        getTvUrl: (imdbId, season, episode, startAt = 0) => `https://vidlink.pro/tv/${imdbId}/${season}/${episode}?player=jw&primaryColor=e50914${startAt > 5 ? `&startAt=${startAt}` : ''}`
+        getMovieUrl: (imdbId, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidlink.pro/movie/${imdbId}?player=jw&primaryColor=e50914`;
+            if (startAt > 5) url += `&startAt=${startAt}`;
+            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        },
+        getTvUrl: (imdbId, season, episode, startAt = 0, subUrl = '', subLabel = 'Malay') => {
+            let url = `https://vidlink.pro/tv/${imdbId}/${season}/${episode}?player=jw&primaryColor=e50914`;
+            if (startAt > 5) url += `&startAt=${startAt}`;
+            if (subUrl) url += `&sub_file=${encodeURIComponent(subUrl)}&sub_label=${encodeURIComponent(subLabel)}`;
+            return url;
+        }
     },
     {
         id: 'vidsrc-to',

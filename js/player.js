@@ -11,6 +11,8 @@ class NetflixPlayer {
         this.historyKey = 'netflix_tv_history';
         this.progressKey = 'devflix_playback_progress_v2';
         this.lastKnownTime = 0;
+        this.activeSubtitle = null; // { url, label, lang }
+        this.availableSubtitles = [];
 
         this.init();
     }
@@ -33,6 +35,7 @@ class NetflixPlayer {
         this.populateServerOptions();
         this.bindEvents();
         this.setupCrossDomainProgressTracker();
+        this.setupSubtitleModal();
     }
 
     setupCrossDomainProgressTracker() {
@@ -311,17 +314,256 @@ class NetflixPlayer {
         let streamUrl = '';
 
         const startAt = this.lastKnownTime > 5 ? this.lastKnownTime : (this.getPlaybackProgress(this.currentMedia.id) || 0);
+        const subUrl = this.activeSubtitle ? this.activeSubtitle.url : '';
+        const subLabel = this.activeSubtitle ? this.activeSubtitle.label : 'Malay';
 
         if (this.currentMedia.type === 'series') {
-            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt);
+            streamUrl = server.getTvUrl(this.currentMedia.id, this.currentMedia.season, this.currentMedia.episode, startAt, subUrl, subLabel);
         } else {
-            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt);
+            streamUrl = server.getMovieUrl(this.currentMedia.id, startAt, subUrl, subLabel);
         }
 
         // Completely remove any sandbox attribute so video embeds never throw "sandboxed frame" error
         this.playerIframe.removeAttribute('sandbox');
 
         this.playerIframe.src = streamUrl;
+    }
+
+    setupSubtitleModal() {
+        const subBtn = document.getElementById('player-subtitle-search-btn');
+        const modal = document.getElementById('player-subtitle-modal');
+        const closeBtn = document.getElementById('close-sub-modal-btn');
+        const langFilter = document.getElementById('sub-lang-filter');
+        const searchInput = document.getElementById('sub-search-input');
+        const externalBtn = document.getElementById('sub-open-external-btn');
+
+        if (subBtn) {
+            subBtn.onclick = (e) => {
+                e.preventDefault();
+                this.openSubtitleModal();
+            };
+        }
+
+        if (closeBtn && modal) {
+            closeBtn.onclick = () => modal.classList.add('hidden');
+        }
+
+        if (modal) {
+            modal.onclick = (e) => {
+                if (e.target === modal) modal.classList.add('hidden');
+            };
+        }
+
+        if (langFilter) {
+            langFilter.onchange = () => this.filterAndRenderSubtitles();
+        }
+
+        if (searchInput) {
+            let timer = null;
+            searchInput.oninput = () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => this.filterAndRenderSubtitles(), 150);
+            };
+        }
+
+        if (externalBtn) {
+            externalBtn.onclick = (e) => {
+                if (this.currentMedia && this.currentMedia.title) {
+                    externalBtn.href = `https://subdl.com/search/${encodeURIComponent(this.currentMedia.title)}`;
+                }
+            };
+        }
+    }
+
+    async openSubtitleModal() {
+        const modal = document.getElementById('player-subtitle-modal');
+        const titleDisplay = document.getElementById('sub-modal-media-title');
+        const listContainer = document.getElementById('sub-results-list');
+        const externalBtn = document.getElementById('sub-open-external-btn');
+
+        if (!modal || !this.currentMedia) return;
+        modal.classList.remove('hidden');
+
+        const epContext = this.currentMedia.type === 'series' 
+            ? ` (S${this.currentMedia.season}:E${this.currentMedia.episode})` 
+            : '';
+        if (titleDisplay) {
+            titleDisplay.textContent = `${this.currentMedia.title}${epContext}`;
+        }
+        if (externalBtn) {
+            externalBtn.href = `https://subdl.com/search/${encodeURIComponent(this.currentMedia.title)}`;
+        }
+
+        if (listContainer) {
+            listContainer.innerHTML = `
+                <div style="text-align:center;color:var(--text-muted,#aaa);padding:2.5rem 1rem;">
+                    <div style="display:inline-block;width:30px;height:30px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--accent-red,#e50914);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:0.75rem;"></div>
+                    <div>Mencari subtitle dari OpenSubtitles v3 untuk <b>${this.currentMedia.title}</b>...</div>
+                </div>
+            `;
+        }
+
+        try {
+            let endpoint = '';
+            if (this.currentMedia.type === 'series') {
+                const s = this.currentMedia.season || 1;
+                const ep = this.currentMedia.episode || 1;
+                endpoint = `https://opensubtitles-v3.strem.io/subtitles/series/${encodeURIComponent(this.currentMedia.id)}:${s}:${ep}.json`;
+            } else {
+                endpoint = `https://opensubtitles-v3.strem.io/subtitles/movie/${encodeURIComponent(this.currentMedia.id)}.json`;
+            }
+
+            const res = await fetch(endpoint);
+            if (res.ok) {
+                const data = await res.json();
+                this.availableSubtitles = (data && Array.isArray(data.subtitles)) ? data.subtitles : [];
+                this.filterAndRenderSubtitles();
+            } else {
+                throw new Error('API request failed');
+            }
+        } catch (err) {
+            if (listContainer) {
+                listContainer.innerHTML = `
+                    <div style="text-align:center;color:#ff8888;padding:2rem;">
+                        <p>⚠️ Gagal berhubung dengan OpenSubtitles secara terus.</p>
+                        <p style="font-size:0.85rem;color:var(--text-muted,#aaa);margin-top:0.5rem;">
+                            Anda boleh guna <b>Server 4 (VidLink Pro)</b> yang sedia ada berpuluh subtitle automatik, atau layari SubDL/Subscene.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    filterAndRenderSubtitles() {
+        const listContainer = document.getElementById('sub-results-list');
+        const langFilter = document.getElementById('sub-lang-filter');
+        const searchInput = document.getElementById('sub-search-input');
+        if (!listContainer) return;
+
+        const targetLang = langFilter ? langFilter.value : 'all';
+        const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+        const langNameMap = {
+            may: 'Malay (Bahasa Melayu)',
+            ind: 'Indonesian',
+            eng: 'English',
+            zho: 'Chinese',
+            jpn: 'Japanese',
+            kor: 'Korean',
+            spa: 'Spanish',
+            ara: 'Arabic',
+            rus: 'Russian',
+            fre: 'French',
+            ger: 'German',
+            ita: 'Italian',
+            por: 'Portuguese',
+            tur: 'Turkish',
+            vie: 'Vietnamese',
+            tha: 'Thai'
+        };
+
+        let matches = [...(this.availableSubtitles || [])];
+
+        if (targetLang !== 'all') {
+            matches = matches.filter(s => s.lang === targetLang);
+        }
+
+        if (q) {
+            matches = matches.filter(s => {
+                const langName = (langNameMap[s.lang] || s.lang || '').toLowerCase();
+                const fn = (s.subtitleFileName || '').toLowerCase();
+                const rn = (s.movieReleaseName || '').toLowerCase();
+                return langName.includes(q) || fn.includes(q) || rn.includes(q);
+            });
+        }
+
+        if (matches.length === 0) {
+            listContainer.innerHTML = `
+                <div style="text-align:center;color:var(--text-muted,#aaa);padding:2rem;">
+                    Tiada fail subtitle dijumpai bagi kriteria bahasa ini.<br>
+                    <small style="opacity:0.7;">Cuba pilih "All Languages" atau tukar ke Server 4 (VidLink Pro).</small>
+                </div>
+            `;
+            return;
+        }
+
+        listContainer.innerHTML = '';
+
+        matches.slice(0, 50).forEach((sub, idx) => {
+            const item = document.createElement('div');
+            item.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 0.75rem 1rem;
+                gap: 0.75rem;
+                transition: all 0.2s;
+            `;
+
+            const langTitle = langNameMap[sub.lang] || sub.lang.toUpperCase();
+            const fileName = sub.subtitleFileName || sub.movieReleaseName || `Subtitle #${idx + 1}`;
+            const isCurrent = this.activeSubtitle && this.activeSubtitle.url === sub.url;
+
+            item.innerHTML = `
+                <div style="flex:1;overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+                        <span style="font-size:0.75rem;font-weight:700;padding:2px 8px;border-radius:6px;background:${isCurrent ? '#46d369' : '#e50914'};color:#fff;text-transform:uppercase;">
+                            ${sub.lang}
+                        </span>
+                        <span style="font-size:0.9rem;font-weight:600;color:#fff;">${langTitle}</span>
+                        ${sub.fpsMilli ? `<span style="font-size:0.75rem;color:var(--text-muted,#888);">${(sub.fpsMilli/1000).toFixed(1)} FPS</span>` : ''}
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--text-muted,#aaa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${fileName}
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.4rem;align-items:center;">
+                    <a href="${sub.url}" download="${fileName}" target="_blank" title="Download .srt" style="background:rgba(255,255,255,0.1);border:none;color:#fff;padding:0.45rem 0.7rem;border-radius:8px;font-size:0.8rem;text-decoration:none;display:inline-flex;align-items:center;">
+                        💾 .srt
+                    </a>
+                    <button class="apply-sub-btn" style="background:${isCurrent ? '#46d369' : 'var(--accent-red,#e50914)'};border:none;color:#fff;font-weight:600;padding:0.45rem 0.9rem;border-radius:8px;font-size:0.8rem;cursor:pointer;">
+                        ${isCurrent ? '✓ Digunakan' : 'Gunakan'}
+                    </button>
+                </div>
+            `;
+
+            const applyBtn = item.querySelector('.apply-sub-btn');
+            if (applyBtn) {
+                applyBtn.onclick = (e) => {
+                    e.preventDefault();
+                    this.applyCustomSubtitle(sub, langTitle);
+                };
+            }
+
+            listContainer.appendChild(item);
+        });
+    }
+
+    applyCustomSubtitle(sub, langTitle) {
+        this.activeSubtitle = {
+            url: sub.url,
+            label: langTitle,
+            lang: sub.lang
+        };
+
+        const subBtn = document.getElementById('player-subtitle-search-btn');
+        if (subBtn) {
+            subBtn.innerHTML = `💬 Sub: ${sub.lang.toUpperCase()} ✓`;
+            subBtn.style.background = '#46d369';
+            subBtn.style.color = '#000';
+            subBtn.style.fontWeight = '700';
+        }
+
+        // Close modal and reload current stream with injected subtitle param
+        const modal = document.getElementById('player-subtitle-modal');
+        if (modal) modal.classList.add('hidden');
+
+        // Reload iframe with the subtitle applied
+        this.loadIframe();
     }
 
     close() {
